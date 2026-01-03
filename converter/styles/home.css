@@ -1,0 +1,17 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.homepage {
+  min-height: 50vh;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center; /* vertical */
+  align-items: center; /* horizontal */
+
+  gap: 12px; /* optional spacing */
+}
