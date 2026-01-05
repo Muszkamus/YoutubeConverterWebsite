@@ -1,38 +1,41 @@
 export type State = {
   link: string;
-  jobId: number | null;
-  status: "idle" | "typed" | "running" | "done" | "error";
+  jobID: number | null;
+  status: "idle" | "queued" | "running" | "done" | "error";
   progress: number;
   message: string;
   downloadUrl: string | null;
+  lockedSubmit: boolean;
   error: string | null;
 };
 
 export type Action =
-  | { type: "START"; payload: { link: string } }
+  | { type: "SUBMIT"; payload: { link: string } }
   | { type: "RESET" };
 
 const initialState: State = {
   link: "",
-  jobId: null,
+  jobID: null,
   status: "idle",
   progress: 0,
   message: "",
   downloadUrl: null,
+  lockedSubmit: false,
   error: null,
 };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case "START":
+    case "SUBMIT":
       return {
         ...state,
         link: action.payload.link,
-        jobId: new Date().getTime(),
-        status: "typed",
+        jobID: new Date().getTime(),
+        status: "queued",
         progress: 0,
         message: "Submitted",
         downloadUrl: null,
+        lockedSubmit: true,
         error: null,
       };
 

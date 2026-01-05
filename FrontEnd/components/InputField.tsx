@@ -5,15 +5,15 @@ import "../styles/inputField.css";
 type InputFieldProps = {
   state: any;
   dispatch: any;
-  link: string;
-  setLink: React.Dispatch<React.SetStateAction<string>>;
+  url: string;
+  setUrl: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const InputField = ({ state, dispatch, link, setLink }: InputFieldProps) => {
+const InputField = ({ state, dispatch, url, setUrl }: InputFieldProps) => {
   return (
     <input
-      onChange={(e) => setLink(e.target.value)}
-      value={link}
+      onChange={(e) => setUrl(e.target.value)}
+      value={url}
       className="input"
       placeholder="Enter YouTube link here"
     ></input>

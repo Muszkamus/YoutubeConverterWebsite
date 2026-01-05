@@ -3,24 +3,29 @@ import "../styles/button.css";
 import type { Action, State } from "../reducer/reducer";
 
 type InputFieldProps = {
-  link: string;
-  setLink: React.Dispatch<React.SetStateAction<string>>;
+  url: string;
   state: State;
   dispatch: React.Dispatch<Action>;
 };
 
-const ConvertButton = ({ link, setLink, state, dispatch }: InputFieldProps) => {
+const ConvertButton = ({ url, state, dispatch }: InputFieldProps) => {
   function submitLink(): void {
-    const trimmed = link.trim();
+    const trimmed = url.trim();
     if (trimmed === "") return;
-    // must start with www.youtube.com, if not return error message
-    dispatch({ type: "START", payload: { link: trimmed } });
+
+    // if (trimmed.startsWith("https://www.youtube.com/")) {
+    dispatch({ type: "SUBMIT", payload: { link: trimmed } });
     console.log(state);
+    //}
   }
 
   return (
     <div>
-      <button className="button" onClick={submitLink}>
+      <button
+        className="button"
+        onClick={submitLink}
+        disabled={state.lockedSubmit}
+      >
         Convert
       </button>
     </div>
