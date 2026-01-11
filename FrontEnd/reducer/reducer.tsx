@@ -1,6 +1,6 @@
 export type State = {
   link: string;
-  jobID: number | null;
+  jobID: string | null;
   status: "idle" | "queued" | "running" | "done" | "error";
   progress: number;
   message: string;
@@ -11,7 +11,13 @@ export type State = {
 
 export type Action =
   | { type: "SUBMIT"; payload: { link: string } }
-  | { type: "RESET" };
+  | { type: "RESET" }
+  | {
+      type: "ERROR";
+      payload: {
+        error: string;
+      };
+    };
 
 const initialState: State = {
   link: "",
@@ -30,7 +36,7 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         link: action.payload.link,
-        jobID: new Date().getTime(),
+        jobID: null,
         status: "queued",
         progress: 0,
         message: "Submitted",
@@ -38,6 +44,20 @@ function reducer(state: State, action: Action): State {
         lockedSubmit: true,
         error: null,
       };
+
+    case "ERROR": {
+      return {
+        ...state,
+        link: "",
+        jobID: null,
+        status: "error",
+        progress: 0,
+        message: "Error: Something went wrong",
+        downloadUrl: null,
+        lockedSubmit: false,
+        error: action.payload.error,
+      };
+    }
 
     case "RESET":
       return initialState;

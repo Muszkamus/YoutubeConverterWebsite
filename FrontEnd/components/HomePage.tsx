@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useReducer, useState } from "react";
 import { initialState, reducer } from "../reducer/reducer";
 import ConvertButton from "../components/ConvertButton";
 import InputField from "../components/InputField";
 
 import "../styles/state.css";
+import ResetButton from "./ResetButton";
 
 const HomePage = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -32,6 +33,7 @@ const HomePage = () => {
           dispatch={dispatch}
         />
         <ConvertButton url={url} state={state} dispatch={dispatch} />
+        <ResetButton dispatch={dispatch} />
 
         <div className="stateBox">
           <p>link: {link}</p>
