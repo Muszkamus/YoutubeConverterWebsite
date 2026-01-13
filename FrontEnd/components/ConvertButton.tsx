@@ -31,9 +31,9 @@ const ConvertButton = ({ url, state, dispatch }: ConvertButtonProps) => {
       }
 
       const data = await res.json();
-      console.log(data);
+      console.log(data.jobID);
 
-      // Later: dispatch more based on response (e.g., jobID, progress)
+      dispatch({ type: "CONVERTING", payload: { jobID: data.jobID } });
     } catch (err: any) {
       dispatch({ type: "ERROR", payload: { error: err.message } });
     }

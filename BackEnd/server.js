@@ -6,13 +6,11 @@ app.use(cors());
 
 app.use(express.json());
 
-// Now your routes
 app.get("/", (req, res) => {
   console.log("Connected");
 });
 
 app.post("/api/convert", (req, res) => {
-  console.log(req);
   const { link } = req.body;
   console.log("Received link:", link);
 
@@ -20,7 +18,15 @@ app.post("/api/convert", (req, res) => {
     return res.status(400).json({ error: "Link is required" });
   }
 
-  res.status(200).json({ jobID: "1234" });
+  // 1. Do all types of safefuarding to verify the link sent
+
+  // 2. After that send the job ID to the front end to notify the user the process is running,
+
+  res.status(200).json({ jobID: "1234567" });
+
+  // 3. Run the ffmpeg processing using the link and python script.
+
+  //
 });
 
 app.listen(8080);

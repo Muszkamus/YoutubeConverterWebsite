@@ -17,7 +17,8 @@ export type Action =
       payload: {
         error: string;
       };
-    };
+    }
+  | { type: "CONVERTING"; payload: { jobID: string } };
 
 const initialState: State = {
   link: "",
@@ -38,12 +39,22 @@ function reducer(state: State, action: Action): State {
         link: action.payload.link,
         jobID: null,
         status: "queued",
-        progress: 0,
+        progress: 30,
         message: "Submitted",
         downloadUrl: null,
         lockedSubmit: true,
         error: null,
       };
+
+    case "CONVERTING": {
+      return {
+        ...state,
+        jobID: action.payload.jobID,
+        status: "running",
+        progress: 60,
+        message: "Starting converting...",
+      };
+    }
 
     case "ERROR": {
       return {
