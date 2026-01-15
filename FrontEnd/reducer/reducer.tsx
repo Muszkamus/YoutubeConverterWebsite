@@ -18,7 +18,8 @@ export type Action =
         error: string;
       };
     }
-  | { type: "CONVERTING"; payload: { jobID: string } };
+  | { type: "CONVERTING"; payload: { jobID: string } }
+  | { type: "SUCCESS" };
 
 const initialState: State = {
   link: "",
@@ -53,6 +54,16 @@ function reducer(state: State, action: Action): State {
         status: "running",
         progress: 60,
         message: "Starting converting...",
+      };
+    }
+
+    case "SUCCESS": {
+      return {
+        ...state,
+        status: "done",
+        progress: 100,
+        message: "Completed",
+        lockedSubmit: false,
       };
     }
 
