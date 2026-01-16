@@ -18,8 +18,18 @@ export type Action =
         error: string;
       };
     }
+  | { type: "JOB_UPDATE"; payload: JobPayload }
   | { type: "CONVERTING"; payload: { jobID: string } }
   | { type: "SUCCESS" };
+
+export type JobPayload = {
+  jobID: string;
+  status: "queued" | "running" | "done" | "error";
+  progress?: number;
+  message?: string;
+  downloadUrl?: string | null;
+  error?: string | null;
+};
 
 const initialState: State = {
   link: "",
@@ -46,6 +56,21 @@ function reducer(state: State, action: Action): State {
         lockedSubmit: true,
         error: null,
       };
+
+    case "JOB_UPDATE": {
+      const j = action.payload;
+
+      return {
+        ...state,
+        jobID: j.jobID,
+        status: j.status,
+        progress: typeof j.progress === "number" ? j.progress : state.progress,
+        message: j.message ?? state.message,
+        downloadUrl: j.downloadUrl ?? state.downloadUrl,
+        error: j.error ?? null,
+        lockedSubmit: j.status === "queued" || j.status === "running",
+      };
+    }
 
     case "CONVERTING": {
       return {

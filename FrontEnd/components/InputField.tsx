@@ -3,13 +3,11 @@
 import "../styles/inputField.css";
 
 type InputFieldProps = {
-  state: any;
-  dispatch: any;
   url: string;
   setUrl: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const InputField = ({ state, dispatch, url, setUrl }: InputFieldProps) => {
+const InputField = ({ url, setUrl }: InputFieldProps) => {
   return (
     <input
       onChange={(e) => setUrl(e.target.value)}

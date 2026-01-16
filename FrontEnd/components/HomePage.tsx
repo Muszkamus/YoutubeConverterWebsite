@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { initialState, reducer } from "../reducer/reducer";
 import ConvertButton from "../components/ConvertButton";
 import InputField from "../components/InputField";
@@ -23,27 +23,59 @@ const HomePage = () => {
     error,
   } = state;
 
+  const backendBase = "http://localhost:8080";
+
+  const fullDownloadUrl =
+    downloadUrl && downloadUrl.startsWith("/")
+      ? backendBase + downloadUrl
+      : downloadUrl;
+
+  useEffect(() => {
+    if (!jobID) return;
+
+    let cancelled = false;
+
+    async function poll() {
+      try {
+        const res = await fetch(`http://localhost:8080/api/jobs/${jobID}`);
+        if (!res.ok) throw new Error("Job not found");
+        const job = await res.json();
+
+        if (cancelled) return;
+
+        dispatch({ type: "JOB_UPDATE", payload: job }); // update status/progress/message/downloadUrl
+
+        if (job.status === "done" || job.status === "error") return; // stop polling
+      } catch (e) {
+        // if (!cancelled) dispatch({ type: "ERROR", payload: String(e) });
+      }
+
+      if (!cancelled) setTimeout(poll, 2000);
+    }
+
+    poll();
+    return () => {
+      cancelled = true;
+    };
+  }, [jobID]);
+
   return (
     <>
       <div className="homepage">
-        <InputField
-          url={url}
-          setUrl={setUrl}
-          state={state}
-          dispatch={dispatch}
-        />
+        <InputField url={url} setUrl={setUrl} />
         <ConvertButton url={url} state={state} dispatch={dispatch} />
         <ResetButton dispatch={dispatch} />
 
+        {status === "done" && fullDownloadUrl && (
+          <a className="" href={fullDownloadUrl} download>
+            Download MP3
+          </a>
+        )}
+
         <div className="stateBox">
-          <p>link: {link}</p>
-          <p>jobId: {jobID}</p>
           <p>status: {status}</p>
-          <p>progress: {progress}</p>
           <p>message: {message}</p>
-          <p>downloadUrl: {downloadUrl}</p>
-          <p>lockedSubmit: {lockedSubmit}</p>
-          <p>error: {error}</p>
+          https://www.youtube.com/watch?v=Vk4t8wUKnbI
         </div>
       </div>
     </>
