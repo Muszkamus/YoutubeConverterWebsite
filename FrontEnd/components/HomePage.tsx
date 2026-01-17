@@ -73,8 +73,8 @@ const HomePage = () => {
         )}
 
         <div className="stateBox">
-          <p>status: {status}</p>
-          <p>message: {message}</p>
+          {/* <p>status: {status}</p>
+          <p>message: {message}</p> */}
           https://www.youtube.com/watch?v=Vk4t8wUKnbI
         </div>
       </div>

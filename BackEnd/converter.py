@@ -4,6 +4,7 @@ import sys
 import json
 import argparse
 from yt_dlp import YoutubeDL
+from typing import Any
 
 def _ffmpeg_exists(ffmpeg_path: str | None) -> bool:
     if not ffmpeg_path:
@@ -49,29 +50,29 @@ def main():
             emit("status", message="Converting to MP3…")
             emit("progress", pct=100)
 
-    ydl_opts = {
-        "format": "bestaudio/best",
-        "outtmpl": os.path.join(outdir, "%(title).200s [%(id)s].%(ext)s"),
-        "noplaylist": True,
-        "restrictfilenames": True,
-        "progress_hooks": [progress_hook],
-        "postprocessors": [
-            {
-                # This will be later modifiable via front end to choose the preferredcodec and preferredquality 
-                "key": "FFmpegExtractAudio",
-                "preferredcodec": "mp3",
-                "preferredquality": "192",
-            }
-        ],
-    }
+    ydl_opts: dict[str, Any] = {
+    "format": "bestaudio/best",
+    "outtmpl": os.path.join(outdir, "%(title).200s [%(id)s].%(ext)s"),
+    "noplaylist": True,
+    "restrictfilenames": True,
+    "progress_hooks": [progress_hook],
+    "postprocessors": [
+        {
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "192",
+        }
+    ],
+}
 
     if _ffmpeg_exists(ffmpeg_path):
         ydl_opts["ffmpeg_location"] = ffmpeg_path
 
     try:
         emit("status", message="Starting")
-        with YoutubeDL(ydl_opts) as ydl:
+        with YoutubeDL(ydl_opts) as ydl:  # pyright: ignore[reportArgumentType]
             ydl.download([url])
+
 
         emit("done", message="Completed", outdir=outdir)
         return 0
