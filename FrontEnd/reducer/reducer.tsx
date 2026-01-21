@@ -3,6 +3,7 @@ export type State = {
   jobID: string | null;
   status: "idle" | "queued" | "running" | "done" | "error";
   progress: number;
+  quality: string;
   message: string;
   downloadUrl: string | null;
   lockedSubmit: boolean;
@@ -10,7 +11,7 @@ export type State = {
 };
 
 export type Action =
-  | { type: "SUBMIT"; payload: { link: string } }
+  | { type: "SUBMIT"; payload: { link: string; quality: string } }
   | { type: "RESET" }
   | {
       type: "ERROR";
@@ -25,6 +26,7 @@ export type Action =
 export type JobPayload = {
   jobID: string;
   status: "queued" | "running" | "done" | "error";
+  quality: string;
   progress?: number;
   message?: string;
   downloadUrl?: string | null;
@@ -36,6 +38,7 @@ const initialState: State = {
   jobID: null,
   status: "idle",
   progress: 0,
+  quality: "192",
   message: "",
   downloadUrl: null,
   lockedSubmit: false,
@@ -51,6 +54,7 @@ function reducer(state: State, action: Action): State {
         jobID: null,
         status: "queued",
         progress: 30,
+        quality: action.payload.quality,
         message: "Submitted",
         downloadUrl: null,
         lockedSubmit: true,

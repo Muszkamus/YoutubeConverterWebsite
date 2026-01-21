@@ -1,18 +1,19 @@
 .input {
   width: 330px;
 
-  padding: 0.15rem 0.5rem;
-  min-height: 40px;
-  border-radius: 4px;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #555;
   outline: none;
-  border: none;
-  line-height: 1.15;
 }
 
-input:focus {
-  border-radius: 4px 4px 2px 2px;
+.input:focus {
+  border-color: #55ff00;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 input:hover {
-  outline: 1px solid lightgrey;
+  outline: 2px solid rgb(255, 255, 255);
 }

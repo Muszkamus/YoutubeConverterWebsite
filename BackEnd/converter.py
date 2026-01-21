@@ -58,6 +58,7 @@ def main():
     "progress_hooks": [progress_hook],
     "postprocessors": [
         {
+            # Here we need to accept values from the front end so we can manipulate quality
             "key": "FFmpegExtractAudio",
             "preferredcodec": "mp3",
             "preferredquality": "192",

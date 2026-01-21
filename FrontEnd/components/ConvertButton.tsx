@@ -6,16 +6,23 @@ import type { Action, State } from "../reducer/reducer";
 
 type ConvertButtonProps = {
   url: string;
+  quality: string;
   state: State;
   dispatch: React.Dispatch<Action>;
 };
 
-const ConvertButton = ({ url, state, dispatch }: ConvertButtonProps) => {
+const ConvertButton = ({
+  url,
+  quality,
+  state,
+  dispatch,
+}: ConvertButtonProps) => {
   async function submitLink(): Promise<void> {
     const trimmed = url.trim();
     if (trimmed === "") return;
-
-    dispatch({ type: "SUBMIT", payload: { link: trimmed } });
+    if (!trimmed.startsWith("https://www.youtube.com/")) return;
+    // Add more safe guards
+    dispatch({ type: "SUBMIT", payload: { link: trimmed, quality: quality } });
 
     try {
       const res = await fetch("http://localhost:8080/api/convert", {
@@ -31,7 +38,6 @@ const ConvertButton = ({ url, state, dispatch }: ConvertButtonProps) => {
       }
 
       const data = await res.json();
-      console.log(data.jobID);
 
       dispatch({ type: "CONVERTING", payload: { jobID: data.jobID } });
     } catch (err: any) {

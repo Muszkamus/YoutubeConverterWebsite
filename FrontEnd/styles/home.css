@@ -5,13 +5,42 @@ body {
 }
 
 .homepage {
-  min-height: 50vh;
-
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 24px; /* stops edge-clipping on small screens */
+}
 
-  justify-content: center; /* vertical */
-  align-items: center; /* horizontal */
+.inputDiv {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap; /* avoids breaking on narrow screens */
+}
 
-  gap: 12px; /* optional spacing */
+.selectionDiv {
+  background-color: beige;
+  display: flex;
+  align-items: center; /* vertical align label + select */
+  justify-content: center;
+  gap: 12px;
+
+  padding: 10px 14px; /* instead of fixed height */
+  border-radius: 10px;
+}
+
+.text {
+  color: #000;
+  margin: 0;
+  font-weight: 700; /* correct “bold” */
+  font-size: 18px;
+  line-height: 1;
+}
+
+.selectionDiv select {
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
 }
