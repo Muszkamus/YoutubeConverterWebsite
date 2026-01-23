@@ -5,6 +5,8 @@ const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const { spawn } = require("child_process");
 
+import setJob from "../BackEnd/functions/setJob"
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -12,19 +14,21 @@ app.use(express.json());
 const DOWNLOADS_DIR = path.resolve(__dirname, "downloads");
 fs.mkdirSync(DOWNLOADS_DIR, { recursive: true });
 
-const jobs = new Map(); // jobID -> {status, progress, message, downloadUrl, error, filePath, createdAt, updatedAt}
 
-function setJob(jobID, patch) {
-  const prev = jobs.get(jobID) ?? {
-    status: "queued",
-    progress: 0,
-    message: "Queued",
-    downloadUrl: null,
-    error: null,
-    filePath: null,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  };
+
+
+
+// function setJob(jobID, patch) {
+//   const prev = jobs.get(jobID) ?? {
+//     status: "queued",
+//     progress: 0,
+//     message: "Queued",
+//     downloadUrl: null,
+//     error: null,
+//     filePath: null,
+//     createdAt: Date.now(),
+//     updatedAt: Date.now(),
+//   };
 
   const next = { ...prev, ...patch, updatedAt: Date.now() };
   jobs.set(jobID, next);
@@ -110,6 +114,10 @@ app.post("/api/convert", (req, res) => {
         setJob(jobID, { status: "running", message: msg.message ?? "" });
       } else if (msg.event === "done") {
         // Python says done; confirm file exists on host and set downloadUrl
+
+        // Once it has been done, set a timer for the download link to be deleted within 2 minutes.
+
+        // Also, try to gather the IP of the person to make only one request per 10 seconds
         finalizeSuccessFromHostFolder();
       } else if (msg.event === "error") {
         setJob(jobID, { status: "error", error: msg.message ?? "Failed" });

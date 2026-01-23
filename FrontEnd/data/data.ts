@@ -1,4 +1,4 @@
-const formats = {
+export const formats = {
   mp3: ["64", "96", "128", "160", "192", "256", "320"],
   wav: [
     "16-bit/44.1kHz",
@@ -10,4 +10,41 @@ const formats = {
   mp4: ["360p", "480p", "720p", "1080p", "1440p", "2160p"],
 } as const;
 
-export default formats;
+export const info = [
+  {
+    id: 1,
+    title: "What this app does",
+    description:
+      "Paste a YouTube link, choose a format (e.g. MP3), and the app generates a downloadable file.",
+  },
+  {
+    id: 2,
+    title: "What happens after you click Convert",
+    description:
+      "The server starts a conversion job, downloads the audio stream, then uses FFmpeg to convert it to your selected format. Your screen shows the job progress until it finishes.",
+  },
+  {
+    id: 3,
+    title: "Supported input",
+    description:
+      "Single YouTube video links only. Playlists, channels, and mixes are not supported.",
+  },
+  {
+    id: 4,
+    title: "Download link and storage",
+    description:
+      "When conversion completes, you get a download link that works for 5 minutes. After that, the file is removed and you’ll need to convert again.",
+  },
+  {
+    id: 5,
+    title: "Privacy",
+    description:
+      "The app only uses the URL you submit to fetch and convert the audio. No account, login, or personal data is required.",
+  },
+  {
+    id: 6,
+    title: "If something goes wrong",
+    description:
+      "If it fails or gets stuck, press Reset and try again. If it keeps failing, the video may be restricted or temporarily unavailable—contact the admin if needed.",
+  },
+];

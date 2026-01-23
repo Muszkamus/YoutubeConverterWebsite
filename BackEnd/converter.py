@@ -52,7 +52,7 @@ def main():
 
     ydl_opts: dict[str, Any] = {
     "format": "bestaudio/best",
-    "outtmpl": os.path.join(outdir, "%(title).200s [%(id)s].%(ext)s"),
+    "outtmpl": os.path.join(outdir, "%(title).200s.%(ext)s"),
     "noplaylist": True,
     "restrictfilenames": True,
     "progress_hooks": [progress_hook],

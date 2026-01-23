@@ -1,5 +1,5 @@
 "use client";
-import formats from "../data/data";
+import { formats, info } from "../data/data";
 import { useEffect, useReducer, useState } from "react";
 import { initialState, reducer } from "../reducer/reducer";
 import ConvertButton from "../components/ConvertButton";
@@ -7,23 +7,22 @@ import InputField from "../components/InputField";
 import "../styles/button.css";
 import "../styles/state.css";
 import ResetButton from "./ResetButton";
+import Accordion from "./Accordion";
 
 const HomePage = () => {
   type Format = keyof typeof formats;
-
   const [format, setFormat] = useState<Format>("mp3");
   const [quality, setQuality] = useState<string>("192");
   const [state, dispatch] = useReducer(reducer, initialState);
   const [url, setUrl] = useState<string>("");
 
   const {
-    link,
     jobID,
     status,
-    progress,
+
     message,
     downloadUrl,
-    lockedSubmit,
+
     error,
   } = state;
 
@@ -75,6 +74,7 @@ const HomePage = () => {
           <InputField url={url} setUrl={setUrl} />
           <ConvertButton
             url={url}
+            format={format}
             quality={quality}
             state={state}
             dispatch={dispatch}
@@ -107,7 +107,11 @@ const HomePage = () => {
             ))}
           </select>
         </div>
-        <ResetButton dispatch={dispatch} />
+        {/* <ResetButton
+          dispatch={dispatch}
+          setFormat={setFormat}
+          setQuality={setQuality}
+        /> */}
         {status === "done" && fullDownloadUrl && (
           <a className="downloadBtn" href={fullDownloadUrl} download>
             Download MP3
@@ -117,12 +121,14 @@ const HomePage = () => {
         <div className="stateBox">
           <p>status: {status}</p>
           <p>job ID: {jobID}</p>
-          <p>quality: {quality}</p>
+          <p>quality: {state.format}</p>
+          <p>quality: {state.quality}</p>
           <p>message: {message}</p>
           <p>error: {error}</p>
           https://www.youtube.com/watch?v=Vk4t8wUKnbI
         </div>
       </div>
+      <Accordion data={info} />
     </>
   );
 };

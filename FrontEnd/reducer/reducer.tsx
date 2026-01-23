@@ -2,7 +2,7 @@ export type State = {
   link: string;
   jobID: string | null;
   status: "idle" | "queued" | "running" | "done" | "error";
-  progress: number;
+  format: string;
   quality: string;
   message: string;
   downloadUrl: string | null;
@@ -11,7 +11,10 @@ export type State = {
 };
 
 export type Action =
-  | { type: "SUBMIT"; payload: { link: string; quality: string } }
+  | {
+      type: "SUBMIT";
+      payload: { link: string; format: string; quality: string };
+    }
   | { type: "RESET" }
   | {
       type: "ERROR";
@@ -37,7 +40,7 @@ const initialState: State = {
   link: "",
   jobID: null,
   status: "idle",
-  progress: 0,
+  format: "mp3",
   quality: "192",
   message: "",
   downloadUrl: null,
@@ -53,7 +56,7 @@ function reducer(state: State, action: Action): State {
         link: action.payload.link,
         jobID: null,
         status: "queued",
-        progress: 30,
+        format: action.payload.format,
         quality: action.payload.quality,
         message: "Submitted",
         downloadUrl: null,
@@ -68,7 +71,6 @@ function reducer(state: State, action: Action): State {
         ...state,
         jobID: j.jobID,
         status: j.status,
-        progress: typeof j.progress === "number" ? j.progress : state.progress,
         message: j.message ?? state.message,
         downloadUrl: j.downloadUrl ?? state.downloadUrl,
         error: j.error ?? null,
@@ -81,7 +83,6 @@ function reducer(state: State, action: Action): State {
         ...state,
         jobID: action.payload.jobID,
         status: "running",
-        progress: 60,
         message: "Starting converting...",
       };
     }
@@ -90,7 +91,6 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         status: "done",
-        progress: 100,
         message: "Completed",
         lockedSubmit: false,
       };
@@ -102,7 +102,6 @@ function reducer(state: State, action: Action): State {
         link: "",
         jobID: null,
         status: "error",
-        progress: 0,
         message: "Error: Something went wrong",
         downloadUrl: null,
         lockedSubmit: false,

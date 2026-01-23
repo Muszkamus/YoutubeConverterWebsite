@@ -6,6 +6,7 @@ import type { Action, State } from "../reducer/reducer";
 
 type ConvertButtonProps = {
   url: string;
+  format: string;
   quality: string;
   state: State;
   dispatch: React.Dispatch<Action>;
@@ -13,6 +14,7 @@ type ConvertButtonProps = {
 
 const ConvertButton = ({
   url,
+  format,
   quality,
   state,
   dispatch,
@@ -20,11 +22,23 @@ const ConvertButton = ({
   async function submitLink(): Promise<void> {
     const trimmed = url.trim();
     if (trimmed === "") return;
+    if (trimmed === "https://www.youtube.com/") return;
     if (!trimmed.startsWith("https://www.youtube.com/")) return;
     // Add more safe guards
-    dispatch({ type: "SUBMIT", payload: { link: trimmed, quality: quality } });
+    dispatch({
+      type: "SUBMIT",
+      payload: {
+        link: trimmed,
+        format: format,
+        quality: quality,
+      },
+    });
+    // Set timeout for 5 seconds for each request
+    const intervalID = setInterval(() => {}, 5000);
 
     try {
+      // Make the request every 10 seconds
+
       const res = await fetch("http://localhost:8080/api/convert", {
         method: "POST",
         headers: {

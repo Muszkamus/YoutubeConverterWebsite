@@ -1,0 +1,70 @@
+.accordion {
+  max-width: 500px;
+  width: 90%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item {
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  padding: 5px 24px;
+  cursor: pointer;
+  border-top: 1px solid #707070;
+  border-bottom: 1px solid #707070;
+  border-radius: 2px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+.item:hover {
+  border-color: #9bff8b;
+  transform: translateY(-3px);
+  background-color: #252525;
+}
+
+.title,
+.icon {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.content-box {
+  grid-column: 2 / -1;
+  padding-bottom: 16px;
+  line-height: 1.6;
+}
+
+.content-box ul {
+  line-height: 1.6;
+  color: #d1d1d1;
+  font-size: 16px;
+  padding-left: 4px; /* slight indent looks natural */
+  transition:
+    max-height 0.3s ease,
+    opacity 0.3s ease;
+}
+
+/* OPEN STATE */
+.open {
+  border-top: 4px solid #087f5b;
+  border-bottom: 4px solid #087f5b;
+}
+
+.open .number,
+.open .title {
+  color: #087f5b;
+}
+.content-box {
+  color: #d1d1d1;
+}
+.textAccordion {
+  color: white;
+  font-size: 20px;
+  text-decoration: underline;
+}
