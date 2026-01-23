@@ -35,16 +35,18 @@ const ConvertButton = ({
     });
     // Set timeout for 5 seconds for each request
     const intervalID = setInterval(() => {}, 5000);
-
+    // Make the request every 10 seconds
     try {
-      // Make the request every 10 seconds
-
       const res = await fetch("http://localhost:8080/api/convert", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ link: trimmed }),
+        body: JSON.stringify({
+          link: trimmed,
+          codec: format,
+          quality: quality,
+        }),
       });
 
       if (!res.ok) {

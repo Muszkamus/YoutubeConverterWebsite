@@ -7,11 +7,22 @@ const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const { spawn } = require("child_process");
 
+const MP3_QUALITIES = new Set(["64", "96", "128", "160", "192", "256", "320"]);
+
+const WAV_PRESETS = new Set([
+  "16-bit/44.1kHz",
+  "16-bit/48kHz",
+  "24-bit/48kHz",
+  "24-bit/96kHz",
+  "24-bit/192kHz",
+]);
+
+const MP4_RES = new Set(["360p", "480p", "720p", "1080p", "1440p", "2160p"]);
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// IMPORTANT: you forgot this
 const jobs = new Map();
 
 const DOWNLOADS_DIR = path.resolve(__dirname, "downloads");
@@ -68,10 +79,39 @@ app.get("/api/download/:jobID", (req, res) => {
 });
 
 app.post("/api/convert", (req, res) => {
-  const { link } = req.body;
+  const {
+    link,
+    codec: codecRaw,
+    format: formatRaw,
+    quality = "192",
+  } = req.body;
+
+  const codec = codecRaw ?? formatRaw ?? "mp3";
+
   if (!link) return res.status(400).json({ error: "Link is required" });
   if (!isAllowedYoutubeUrl(link)) {
     return res.status(400).json({ error: "Only YouTube links are allowed" });
+  }
+
+  let dockerArgsExtra = [];
+
+  if (codec === "mp3") {
+    if (!MP3_QUALITIES.has(quality)) {
+      return res.status(400).json({ error: "Invalid MP3 quality" });
+    }
+    dockerArgsExtra = ["--codec", "mp3", "--quality", quality];
+  } else if (codec === "wav") {
+    if (!WAV_PRESETS.has(quality)) {
+      return res.status(400).json({ error: "Invalid WAV preset" });
+    }
+    dockerArgsExtra = ["--codec", "wav", "--quality", quality];
+  } else if (codec === "mp4") {
+    if (!MP4_RES.has(quality)) {
+      return res.status(400).json({ error: "Invalid MP4 resolution" });
+    }
+    dockerArgsExtra = ["--codec", "mp4", "--quality", quality];
+  } else {
+    return res.status(400).json({ error: "Unsupported codec" });
   }
 
   const jobID = uuidv4();
@@ -98,6 +138,7 @@ app.post("/api/convert", (req, res) => {
       link,
       "--outdir",
       `/app/downloads/${jobID}`,
+      ...dockerArgsExtra,
     ],
     { windowsHide: true },
   );
@@ -115,10 +156,10 @@ app.post("/api/convert", (req, res) => {
     } catch {}
   }, JOB_TIMEOUT_MS);
 
-  function pickNewestMp3(folder) {
-    const mp3s = fs
+  function pickNewestByExt(folder, ext) {
+    const files = fs
       .readdirSync(folder)
-      .filter((f) => f.toLowerCase().endsWith(".mp3"))
+      .filter((f) => f.toLowerCase().endsWith(ext))
       .map((f) => {
         const full = path.join(folder, f);
         const stat = fs.statSync(full);
@@ -126,19 +167,20 @@ app.post("/api/convert", (req, res) => {
       })
       .sort((a, b) => b.mtimeMs - a.mtimeMs);
 
-    return mp3s.length ? mp3s[0].full : null;
+    return files.length ? files[0].full : null;
   }
 
   function finalizeSuccessFromHostFolder() {
-    const filePath = pickNewestMp3(jobDirHost);
-
+    const ext = codec === "mp4" ? ".mp4" : codec === "wav" ? ".wav" : ".mp3";
+    const filePath = pickNewestByExt(jobDirHost, ext);
+    const extLabel = codec.toUpperCase();
     setJob(jobID, {
       status: filePath ? "done" : "error",
       progress: 100,
-      message: filePath ? "Completed" : "Completed but no mp3 found",
+      message: filePath ? "Completed" : `Completed but no ${extLabel} found`,
       filePath,
       downloadUrl: filePath ? `/api/download/${jobID}` : null,
-      error: filePath ? null : "No mp3 produced",
+      error: filePath ? null : `No ${extLabel} produced`,
     });
   }
 
