@@ -19,6 +19,8 @@ def emit(event: str, **data):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", required=True)
+    parser.add_argument("--codec", default="mp3")       
+    parser.add_argument("--quality", default="192") 
     parser.add_argument("--outdir", required=True)
     parser.add_argument("--ffmpeg-path", default="")
     args = parser.parse_args()
@@ -58,10 +60,10 @@ def main():
     "progress_hooks": [progress_hook],
     "postprocessors": [
         {
-            # Here we need to accept values from the front end so we can manipulate quality
+            # Here we need to accept values from the front end so we can manipulate key, codec and quality
             "key": "FFmpegExtractAudio",
-            "preferredcodec": "mp3",
-            "preferredquality": "192",
+            "preferredcodec": args.codec,
+            "preferredquality": args.quality,
         }
     ],
 }

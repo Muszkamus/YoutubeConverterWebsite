@@ -1,5 +1,5 @@
 import React from "react";
-import formats from "../data/data";
+import { formats } from "../data/data";
 import type { Action } from "../reducer/reducer";
 type Format = keyof typeof formats;
 type ResetButton = {

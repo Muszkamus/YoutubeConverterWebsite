@@ -107,11 +107,11 @@ const HomePage = () => {
             ))}
           </select>
         </div>
-        {/* <ResetButton
+        <ResetButton
           dispatch={dispatch}
           setFormat={setFormat}
           setQuality={setQuality}
-        /> */}
+        />
         {status === "done" && fullDownloadUrl && (
           <a className="downloadBtn" href={fullDownloadUrl} download>
             Download MP3

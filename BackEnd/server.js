@@ -1,3 +1,5 @@
+// Get the information from reducer state and convert it into ffmpeg format
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -5,34 +7,46 @@ const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const { spawn } = require("child_process");
 
-import setJob from "../BackEnd/functions/setJob"
-
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// IMPORTANT: you forgot this
+const jobs = new Map();
+
 const DOWNLOADS_DIR = path.resolve(__dirname, "downloads");
 fs.mkdirSync(DOWNLOADS_DIR, { recursive: true });
 
-
-
-
-
-// function setJob(jobID, patch) {
-//   const prev = jobs.get(jobID) ?? {
-//     status: "queued",
-//     progress: 0,
-//     message: "Queued",
-//     downloadUrl: null,
-//     error: null,
-//     filePath: null,
-//     createdAt: Date.now(),
-//     updatedAt: Date.now(),
-//   };
+function setJob(jobID, patch) {
+  const prev = jobs.get(jobID) ?? {
+    status: "queued",
+    progress: 0,
+    message: "Queued",
+    downloadUrl: null,
+    error: null,
+    filePath: null,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  };
 
   const next = { ...prev, ...patch, updatedAt: Date.now() };
   jobs.set(jobID, next);
   return next;
+}
+
+// Basic allowlist to reduce abuse (adjust as needed)
+function isAllowedYoutubeUrl(url) {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, "");
+    return (
+      host === "youtube.com" ||
+      host === "youtu.be" ||
+      host === "music.youtube.com"
+    );
+  } catch {
+    return false;
+  }
 }
 
 // Polling endpoint
@@ -42,50 +56,81 @@ app.get("/api/jobs/:jobID", (req, res) => {
   res.json({ jobID: req.params.jobID, ...job });
 });
 
-// File download endpoint (simple, no auth)
+// File download endpoint
 app.get("/api/download/:jobID", (req, res) => {
   const job = jobs.get(req.params.jobID);
   if (!job || job.status !== "done" || !job.filePath) {
     return res.status(404).json({ error: "File not available" });
   }
-  res.download(job.filePath);
+
+  // Nice download name
+  res.download(job.filePath, path.basename(job.filePath));
 });
 
 app.post("/api/convert", (req, res) => {
   const { link } = req.body;
   if (!link) return res.status(400).json({ error: "Link is required" });
+  if (!isAllowedYoutubeUrl(link)) {
+    return res.status(400).json({ error: "Only YouTube links are allowed" });
+  }
 
   const jobID = uuidv4();
 
-  // Per-job output folder on host to avoid "newest mp3" bugs
   const jobDirHost = path.join(DOWNLOADS_DIR, jobID);
   fs.mkdirSync(jobDirHost, { recursive: true });
 
   setJob(jobID, { status: "running", message: "Starting", progress: 0 });
   res.status(202).json({ jobID });
 
-  // Windows path -> docker mount safe form
-  const dockerMountPath = DOWNLOADS_DIR.replace(/\\/g, "/");
+  // DO NOT try to hand-convert Windows paths. Give Docker the absolute path.
+  // Docker Desktop understands normal Windows absolute paths.
+  const mountArg = `${DOWNLOADS_DIR}:/app/downloads`;
 
-  // Write into /app/downloads/<jobID> which maps to downloads/<jobID> on host
-  const converter = spawn("docker", [
-    "run",
-    "--rm",
-    "-v",
-    `${dockerMountPath}:/app/downloads`,
-    "yt-converter",
-    "--url",
-    link,
-    "--outdir",
-    `/app/downloads/${jobID}`,
-  ]);
+  const converter = spawn(
+    "docker",
+    [
+      "run",
+      "--rm",
+      "-v",
+      mountArg,
+      "yt-converter",
+      "--url",
+      link,
+      "--outdir",
+      `/app/downloads/${jobID}`,
+    ],
+    { windowsHide: true },
+  );
+
+  // Kill stuck jobs
+  const JOB_TIMEOUT_MS = 10 * 60 * 1000; // 10 min
+  const killTimer = setTimeout(() => {
+    setJob(jobID, {
+      status: "error",
+      error: "Job timed out",
+      message: "Timed out",
+    });
+    try {
+      converter.kill("SIGKILL");
+    } catch {}
+  }, JOB_TIMEOUT_MS);
+
+  function pickNewestMp3(folder) {
+    const mp3s = fs
+      .readdirSync(folder)
+      .filter((f) => f.toLowerCase().endsWith(".mp3"))
+      .map((f) => {
+        const full = path.join(folder, f);
+        const stat = fs.statSync(full);
+        return { full, mtimeMs: stat.mtimeMs };
+      })
+      .sort((a, b) => b.mtimeMs - a.mtimeMs);
+
+    return mp3s.length ? mp3s[0].full : null;
+  }
 
   function finalizeSuccessFromHostFolder() {
-    const mp3s = fs
-      .readdirSync(jobDirHost)
-      .filter((f) => f.toLowerCase().endsWith(".mp3"));
-
-    const filePath = mp3s.length ? path.join(jobDirHost, mp3s[0]) : null;
+    const filePath = pickNewestMp3(jobDirHost);
 
     setJob(jobID, {
       status: filePath ? "done" : "error",
@@ -97,67 +142,79 @@ app.post("/api/convert", (req, res) => {
     });
   }
 
-  function handleLine(line, streamName) {
+  // Only parse JSON from STDOUT (your Python emits JSON to stdout)
+  function handleJsonLine(line) {
     if (!line) return;
 
-    try {
-      const msg = JSON.parse(line);
-      console.log(`[${jobID}]`, msg);
+    const msg = JSON.parse(line);
 
-      if (msg.event === "progress") {
-        setJob(jobID, {
-          status: "running",
-          progress: typeof msg.pct === "number" ? msg.pct : 0,
-          message: msg.message ?? "",
-        });
-      } else if (msg.event === "status") {
-        setJob(jobID, { status: "running", message: msg.message ?? "" });
-      } else if (msg.event === "done") {
-        // Python says done; confirm file exists on host and set downloadUrl
+    if (msg.event === "progress") {
+      setJob(jobID, {
+        status: "running",
+        progress: typeof msg.pct === "number" ? msg.pct : 0,
+        message: msg.message ?? "",
+      });
+      return;
+    }
 
-        // Once it has been done, set a timer for the download link to be deleted within 2 minutes.
+    if (msg.event === "status") {
+      setJob(jobID, { status: "running", message: msg.message ?? "" });
+      return;
+    }
 
-        // Also, try to gather the IP of the person to make only one request per 10 seconds
-        finalizeSuccessFromHostFolder();
-      } else if (msg.event === "error") {
-        setJob(jobID, { status: "error", error: msg.message ?? "Failed" });
-      }
-    } catch {
-      // Do not suppress non-JSON output; it contains the real ffmpeg/yt-dlp logs
-      console.log(`[${jobID}] ${streamName}: ${line}`);
+    if (msg.event === "done") {
+      finalizeSuccessFromHostFolder();
+      return;
+    }
+
+    if (msg.event === "error") {
+      setJob(jobID, {
+        status: "error",
+        error: msg.message ?? "Failed",
+        message: msg.message ?? "Failed",
+      });
+      return;
     }
   }
 
-  const bufferStdout = { tail: "" };
+  let stdoutTail = "";
   converter.stdout.on("data", (data) => {
-    const text = bufferStdout.tail + data.toString();
+    const text = stdoutTail + data.toString("utf8");
     const lines = text.split("\n");
-    bufferStdout.tail = lines.pop() ?? "";
-    for (const line of lines) handleLine(line.trim(), "STDOUT");
+    stdoutTail = lines.pop() ?? "";
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+
+      try {
+        handleJsonLine(trimmed);
+      } catch {
+        // If something prints non-JSON to stdout, keep it for debugging
+        console.log(`[${jobID}] STDOUT: ${trimmed}`);
+      }
+    }
   });
 
-  const bufferStderr = { tail: "" };
+  // Keep stderr as logs only; don't JSON-parse it
   converter.stderr.on("data", (data) => {
-    const text = bufferStderr.tail + data.toString();
-    const lines = text.split("\n");
-    bufferStderr.tail = lines.pop() ?? "";
-    for (const line of lines) handleLine(line.trim(), "STDERR");
+    const txt = data.toString("utf8").trim();
+    if (txt) console.log(`[${jobID}] STDERR: ${txt}`);
   });
 
   converter.on("close", (code) => {
+    clearTimeout(killTimer);
     console.log(`[${jobID}] Docker exited with code ${code}`);
 
     const job = jobs.get(jobID);
-    // If python already marked done/error, don’t override
     if (job?.status === "done" || job?.status === "error") return;
 
-    if (code === 0) {
-      // If we didn't get a JSON "done" event, still finalize from folder
-      finalizeSuccessFromHostFolder();
-    } else {
+    if (code === 0) finalizeSuccessFromHostFolder();
+    else {
       setJob(jobID, {
         status: "error",
         error: `Docker exited with code ${code}`,
+        message: "Conversion failed",
       });
     }
   });
