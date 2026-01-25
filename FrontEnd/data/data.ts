@@ -10,6 +10,12 @@ export const formats = {
   mp4: ["360p", "480p", "720p", "1080p", "1440p", "2160p"],
 } as const;
 
+// type infoTypes = {
+//   id: number;
+//   title: string;
+//   description: string;
+// };
+
 export const info = [
   {
     id: 1,
@@ -33,7 +39,7 @@ export const info = [
     id: 4,
     title: "Download link and storage",
     description:
-      "When conversion completes, you get a download link that works for 5 minutes. After that, the file is removed and you’ll need to convert again.",
+      "When conversion completes, you get a download link that works for 3 minutes. After that, the file is removed and you’ll need to convert again.",
   },
   {
     id: 5,

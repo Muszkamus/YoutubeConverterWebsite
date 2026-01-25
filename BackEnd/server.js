@@ -20,13 +20,25 @@ const WAV_PRESETS = new Set([
 const MP4_RES = new Set(["360p", "480p", "720p", "1080p", "1440p", "2160p"]);
 
 const app = express();
+const jobs = new Map();
+
 app.use(cors());
 app.use(express.json());
 
-const jobs = new Map();
-
 const DOWNLOADS_DIR = path.resolve(__dirname, "downloads");
 fs.mkdirSync(DOWNLOADS_DIR, { recursive: true });
+
+const JOB_TTL_MS = 1 * 60 * 1000; // 1 minute
+
+function isExpired(job) {
+  return !job?.expiresAt || Date.now() > job.expiresAt;
+}
+
+function safeRmDir(dirPath) {
+  try {
+    fs.rmSync(dirPath, { recursive: true, force: true });
+  } catch {}
+}
 
 function setJob(jobID, patch) {
   const prev = jobs.get(jobID) ?? {
@@ -38,9 +50,15 @@ function setJob(jobID, patch) {
     filePath: null,
     createdAt: Date.now(),
     updatedAt: Date.now(),
+    expiresAt: Date.now() + JOB_TTL_MS,
   };
 
-  const next = { ...prev, ...patch, updatedAt: Date.now() };
+  const next = {
+    ...prev,
+    ...patch,
+    expiresAt: prev.expiresAt,
+    updatedAt: Date.now(),
+  };
   jobs.set(jobID, next);
   return next;
 }
@@ -64,18 +82,37 @@ function isAllowedYoutubeUrl(url) {
 app.get("/api/jobs/:jobID", (req, res) => {
   const job = jobs.get(req.params.jobID);
   if (!job) return res.status(404).json({ error: "Job not found" });
+
+  if (isExpired(job)) {
+    // optional: also delete immediately when first noticed
+    const jobDirHost = path.join(DOWNLOADS_DIR, req.params.jobID);
+    safeRmDir(jobDirHost);
+    jobs.delete(req.params.jobID);
+    return res.status(410).json({ error: "Job expired" }); // 410 Gone
+  }
+
   res.json({ jobID: req.params.jobID, ...job });
 });
 
 // File download endpoint
 app.get("/api/download/:jobID", (req, res) => {
-  const job = jobs.get(req.params.jobID);
-  if (!job || job.status !== "done" || !job.filePath) {
+  const jobID = req.params.jobID;
+  const job = jobs.get(jobID);
+
+  if (!job) return res.status(404).json({ error: "Job not found" });
+
+  if (isExpired(job)) {
+    const jobDirHost = path.join(DOWNLOADS_DIR, jobID);
+    safeRmDir(jobDirHost);
+    jobs.delete(jobID);
+    return res.status(410).json({ error: "Download link expired" });
+  }
+
+  if (job.status !== "done" || !job.filePath) {
     return res.status(404).json({ error: "File not available" });
   }
 
-  // Nice download name
-  res.download(job.filePath, path.basename(job.filePath));
+  return res.download(job.filePath, path.basename(job.filePath));
 });
 
 app.post("/api/convert", (req, res) => {
@@ -218,6 +255,20 @@ app.post("/api/convert", (req, res) => {
       return;
     }
   }
+
+  const CLEANUP_EVERY_MS = 30 * 1000; // run every 30s
+
+  setInterval(() => {
+    const now = Date.now();
+
+    for (const [jobID, job] of jobs.entries()) {
+      if (job.expiresAt && now > job.expiresAt) {
+        const jobDirHost = path.join(DOWNLOADS_DIR, jobID);
+        safeRmDir(jobDirHost);
+        jobs.delete(jobID);
+      }
+    }
+  }, CLEANUP_EVERY_MS).unref();
 
   let stdoutTail = "";
   converter.stdout.on("data", (data) => {

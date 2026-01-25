@@ -15,17 +15,7 @@ const HomePage = () => {
   const [quality, setQuality] = useState<string>("192");
   const [state, dispatch] = useReducer(reducer, initialState);
   const [url, setUrl] = useState<string>("");
-
-  const {
-    jobID,
-    status,
-
-    message,
-    downloadUrl,
-
-    error,
-  } = state;
-
+  const { jobID, status, message, downloadUrl, error } = state;
   const backendBase = "http://localhost:8080";
 
   const fullDownloadUrl =
@@ -114,7 +104,7 @@ const HomePage = () => {
         />
         {status === "done" && fullDownloadUrl && (
           <a className="downloadBtn" href={fullDownloadUrl} download>
-            Download MP3
+            Download {state.format}
           </a>
         )}
 
@@ -125,7 +115,7 @@ const HomePage = () => {
           <p>quality: {state.quality}</p>
           <p>message: {message}</p>
           <p>error: {error}</p>
-          https://www.youtube.com/watch?v=Vk4t8wUKnbI
+          https://www.youtube.com/watch?v=jKZ67l61Zho
         </div>
       </div>
       <Accordion data={info} />
