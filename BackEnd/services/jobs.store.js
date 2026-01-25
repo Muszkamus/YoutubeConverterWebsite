@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const { safeRmDir } = require("../utils/fsSafe");
 
-const DOWNLOADS_DIR = path.resolve(__dirname, "../../downloads");
+const DOWNLOADS_DIR = path.resolve(__dirname, "../downloads");
 fs.mkdirSync(DOWNLOADS_DIR, { recursive: true });
 
 const jobs = new Map();
