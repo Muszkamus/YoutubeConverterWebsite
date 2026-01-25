@@ -30,7 +30,7 @@ const HomePage = () => {
 
     async function poll() {
       try {
-        const res = await fetch(`http://localhost:8080/api/jobs/${jobID}`);
+        const res = await fetch(`${backendBase}/api/jobs/${jobID}`);
         if (!res.ok) throw new Error("Job not found");
         const job = await res.json();
 
@@ -40,7 +40,11 @@ const HomePage = () => {
 
         if (job.status === "done" || job.status === "error") return; // stop polling
       } catch (e) {
-        // if (!cancelled) dispatch({ type: "ERROR", payload: String(e) });
+        if (!cancelled)
+          dispatch({
+            type: "ERROR",
+            payload: { error: String(e) },
+          });
       }
 
       if (!cancelled) setTimeout(poll, 2000);
@@ -110,9 +114,6 @@ const HomePage = () => {
 
         <div className="stateBox">
           <p>status: {status}</p>
-          <p>job ID: {jobID}</p>
-          <p>quality: {state.format}</p>
-          <p>quality: {state.quality}</p>
           <p>message: {message}</p>
           <p>error: {error}</p>
           https://www.youtube.com/watch?v=jKZ67l61Zho

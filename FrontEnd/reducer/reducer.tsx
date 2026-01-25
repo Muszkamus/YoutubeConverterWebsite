@@ -65,16 +65,16 @@ function reducer(state: State, action: Action): State {
       };
 
     case "JOB_UPDATE": {
-      const j = action.payload;
-
       return {
         ...state,
-        jobID: j.jobID,
-        status: j.status,
-        message: j.message ?? state.message,
-        downloadUrl: j.downloadUrl ?? state.downloadUrl,
-        error: j.error ?? null,
-        lockedSubmit: j.status === "queued" || j.status === "running",
+        jobID: action.payload.jobID,
+        status: action.payload.status,
+        message: action.payload.message ?? state.message,
+        downloadUrl: action.payload.downloadUrl ?? state.downloadUrl,
+        error: action.payload.error ?? null,
+        lockedSubmit:
+          action.payload.status === "queued" ||
+          action.payload.status === "running",
       };
     }
 
