@@ -1,16 +1,7 @@
 "use client";
 
-import React from "react";
 import "../styles/button.css";
-import type { Action, State } from "../reducer/reducer";
-
-type ConvertButtonProps = {
-  url: string;
-  format: string;
-  quality: string;
-  state: State;
-  dispatch: React.Dispatch<Action>;
-};
+import { ConvertButtonProps } from "../types/ConvertButtonTypes";
 
 const ConvertButton = ({
   url,

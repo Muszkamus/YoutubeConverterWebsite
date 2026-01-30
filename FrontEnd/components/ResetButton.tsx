@@ -1,16 +1,16 @@
-import React from "react";
-import { formats } from "../data/data";
-import type { Action } from "../reducer/reducer";
-type Format = keyof typeof formats;
-type ResetButton = {
-  dispatch: React.Dispatch<Action>;
-  setFormat: React.Dispatch<React.SetStateAction<Format>>;
-  setQuality: React.Dispatch<React.SetStateAction<string>>;
-};
+"use client";
 
-const ResetButton = ({ dispatch, setFormat, setQuality }: ResetButton) => {
+import { ResetButtonProps } from "../types/ResetButtonType";
+
+const ResetButton = ({
+  dispatch,
+  setUrl,
+  setFormat,
+  setQuality,
+}: ResetButtonProps) => {
   function handleReset() {
     dispatch({ type: "RESET" });
+    setUrl("");
     setFormat("mp3");
     setQuality("192");
   }

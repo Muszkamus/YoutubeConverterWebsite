@@ -1,11 +1,7 @@
 "use client";
-
 import "../styles/inputField.css";
 
-type InputFieldProps = {
-  url: string;
-  setUrl: React.Dispatch<React.SetStateAction<string>>;
-};
+import { InputFieldProps } from "../types/InputFileTypes";
 
 const InputField = ({ url, setUrl }: InputFieldProps) => {
   return (

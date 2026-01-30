@@ -1,6 +1,4 @@
-# Abuse Reduction – Practical, High‑Impact Measures
-
-This document outlines concrete, low‑overhead strategies to reduce abuse, control costs, and protect system stability for a media‑conversion backend.
+# Abuse Reduction
 
 ---
 
@@ -104,29 +102,7 @@ Never spawn unlimited Docker containers.
 
 ---
 
-## 6. Cache identical conversions
-
-Reuse outputs when possible.
-
-**Cache key**
-
-- Video ID
-- Codec
-- Quality / resolution
-
-**Strategy**
-
-- If identical job exists and file not expired → reuse
-- Respect TTL
-
-**Why**
-
-- Reduces compute cost
-- Mitigates repeated‑request attacks
-
----
-
-## 7. Lock Docker down
+## 6. Lock Docker down
 
 Limit container damage and resource abuse.
 
@@ -156,7 +132,7 @@ docker run --rm \
 
 ---
 
-## 8. Polling abuse mitigation
+## 7. Polling abuse mitigation
 
 Polling can be abused heavily.
 
@@ -176,7 +152,7 @@ Polling can be abused heavily.
 
 ---
 
-## 9. Logging + denylist
+## 8. Logging + denylist
 
 Track basic abuse signals.
 
@@ -199,7 +175,7 @@ Track basic abuse signals.
 
 ---
 
-## 10. Storage limits + cleanup safety
+## 9. Storage limits + cleanup safety
 
 Always clean aggressively.
 
@@ -230,5 +206,3 @@ Always clean aggressively.
 5. Docker resource limits
 
 ---
-
-**Goal:** predictable cost, stable performance, and graceful degradation under abuse.

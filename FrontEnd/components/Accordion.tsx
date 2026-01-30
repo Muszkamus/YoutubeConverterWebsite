@@ -1,21 +1,11 @@
 "use client";
 
 import "../styles/accordion.css";
-
 import { useState } from "react";
+import { AccordionItemProps, AccordionProps } from "../types/AccordionTypes";
 
-type AccordionItemData = {
-  id: number;
-  title: string;
-  description: string;
-};
-
-type AccordionProps = {
-  data: AccordionItemData[];
-};
 export default function Accordion({ data }: AccordionProps) {
   const [curOpen, setCurOpen] = useState<number | null>(null);
-
   return (
     <div className="accordion">
       {data.map((el, i) => (
@@ -32,15 +22,6 @@ export default function Accordion({ data }: AccordionProps) {
     </div>
   );
 }
-
-type AccordionItemProps = {
-  num: number;
-
-  title: string;
-  curOpen: number | null;
-  onOpen: (id: number | null) => void;
-  children: React.ReactNode;
-};
 
 function AccordionItem({
   num,

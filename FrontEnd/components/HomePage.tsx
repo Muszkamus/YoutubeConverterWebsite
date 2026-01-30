@@ -103,6 +103,7 @@ const HomePage = () => {
         </div>
         <ResetButton
           dispatch={dispatch}
+          setUrl={setUrl}
           setFormat={setFormat}
           setQuality={setQuality}
         />
