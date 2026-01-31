@@ -1,7 +1,7 @@
 "use client";
 
 import "../styles/button.css";
-import { ConvertButtonProps } from "../types/ConvertButtonTypes";
+import { ConvertButtonProps } from "./ConvertButton.types";
 
 const ConvertButton = ({
   url,

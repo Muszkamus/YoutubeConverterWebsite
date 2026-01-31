@@ -1,7 +1,7 @@
 "use client";
 import "../styles/inputField.css";
 
-import { InputFieldProps } from "../types/InputFileTypes";
+import { InputFieldProps } from "./InputFile.types";
 
 const InputField = ({ url, setUrl }: InputFieldProps) => {
   return (

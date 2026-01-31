@@ -1,4 +1,4 @@
-import { Action, State } from "../reducer/reducer";
+import { Action, State } from "../reducer/reducerTypes";
 
 export type ConvertButtonProps = {
   url: string;

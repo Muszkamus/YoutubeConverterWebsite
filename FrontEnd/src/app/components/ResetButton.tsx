@@ -1,6 +1,6 @@
 "use client";
 
-import { ResetButtonProps } from "../types/ResetButtonType";
+import { ResetButtonProps } from "./ResetButton.types";
 
 const ResetButton = ({
   dispatch,

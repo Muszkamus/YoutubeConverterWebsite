@@ -1,5 +1,5 @@
 import { formats } from "../data/data";
-import { Action } from "../reducer/reducer";
+import { Action } from "../../../reducer/reducer";
 
 export type Format = keyof typeof formats;
 export type ResetButtonProps = {

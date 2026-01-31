@@ -2,7 +2,7 @@
 
 import "../styles/accordion.css";
 import { useState } from "react";
-import { AccordionItemProps, AccordionProps } from "../types/AccordionTypes";
+import { AccordionItemProps, AccordionProps } from "./Accordion.types";
 
 export default function Accordion({ data }: AccordionProps) {
   const [curOpen, setCurOpen] = useState<number | null>(null);
