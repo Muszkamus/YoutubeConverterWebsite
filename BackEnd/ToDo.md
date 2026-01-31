@@ -1,3 +1,74 @@
+# – Fix expired download links & localhost redirect
+
+## 1. Stop returning `localhost:8080` in download links
+
+- [ ] Locate where `downloadUrl` is set (job `"done"` state)
+- [ ] Remove hardcoded `http://localhost:8080`
+- [ ] Prefer returning **relative path only**:
+  - `/api/download/:jobID`
+- [ ] In frontend, build absolute URL using env config:
+  - `VITE_API_BASE + downloadPath`
+
+**Alternative (backend absolute URL):**
+
+- [ ] Enable proxy trust: `app.set("trust proxy", 1)`
+- [ ] Build base URL from request headers:
+  - `x-forwarded-proto`
+  - `x-forwarded-host`
+
+---
+
+## 2. Fix expired link behavior (410 vs 404)
+
+- [ ] Do NOT delete job inside `/download/:jobID` route
+- [ ] When expired:
+  - Return `410 Gone`
+  - Message: `"Download link expired"`
+- [ ] Let cleanup loop handle deletion
+
+---
+
+## 3. Improve cleanup logic (recommended)
+
+- [ ] Replace immediate delete with **expire → tombstone**
+- [ ] On expiry:
+  - Remove files
+  - Keep job with `status: "expired"`
+- [ ] Hard-delete expired jobs after secondary TTL (e.g. +10 min)
+
+---
+
+## 4. Correct HTTP status codes
+
+- [ ] `409 Conflict` → job exists but not finished
+- [ ] `410 Gone` → expired link
+- [ ] `404 Not Found` → invalid / unknown job
+
+---
+
+## 5. Frontend handling
+
+- [ ] Treat `410` as “Expired – reconvert”
+- [ ] Treat `409` as “Processing”
+- [ ] Do NOT treat all errors as “Job not found”
+
+---
+
+## 6. Deployment sanity check
+
+- [ ] Remember: jobs are stored in-memory (`Map`)
+- [ ] Server restart = all jobs gone
+- [ ] Accept this OR move jobs to Redis / DB
+
+---
+
+## Acceptance criteria
+
+- [ ] No `localhost` URLs in production
+- [ ] Expired links always return `410`
+- [ ] UI shows clear “expired” state
+- [ ] No flip-flopping between 410 → 404
+
 # Abuse Reduction
 
 ---

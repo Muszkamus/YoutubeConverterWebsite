@@ -11,8 +11,8 @@
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
   padding: 5px 24px;
   cursor: pointer;
-  border-top: 1px solid #707070;
-  border-bottom: 1px solid #707070;
+  border-top: 2px solid #585858;
+  border-bottom: 2px solid #585858;
   border-radius: 2px;
 
   display: flex;
@@ -52,8 +52,8 @@
 
 /* OPEN STATE */
 .open {
-  border-top: 4px solid #087f5b;
-  border-bottom: 4px solid #087f5b;
+  border-top: 4px solid #61a756;
+  border-bottom: 4px solid #61a756;
 }
 
 .open .number,

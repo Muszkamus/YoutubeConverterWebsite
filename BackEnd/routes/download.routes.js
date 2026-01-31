@@ -4,11 +4,11 @@ const { getJob, isExpired, deleteJob } = require("../services/jobs.store");
 
 const router = express.Router();
 
-router.get("/download/:jobID", (req, res) => {
+router.get("/downloads/:jobID", (req, res) => {
   const jobID = req.params.jobID;
   const job = getJob(jobID);
 
-  if (!job) return res.status(404).json({ error: "Job not found" });
+  if (!job) return res.status(410).json({ error: "Job not found" });
 
   if (isExpired(job)) {
     deleteJob(jobID);

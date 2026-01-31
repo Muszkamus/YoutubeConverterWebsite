@@ -63,7 +63,7 @@ function runConversion({ jobID, link, codec, dockerArgsExtra }) {
       progress: 100,
       message: filePath ? "Completed" : `Completed but no ${extLabel} found`,
       filePath,
-      downloadUrl: filePath ? `/api/download/${jobID}` : null,
+      downloadUrl: filePath ? `/api/downloads/${jobID}` : null,
       error: filePath ? null : `No ${extLabel} produced`,
     });
   }

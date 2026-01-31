@@ -32,20 +32,6 @@ def main() -> int:
     codec = args.codec.strip().lower()
     quality = str(args.quality).strip()
 
-
-    base_opts = {
-    "outtmpl": os.path.join(outdir, "%(title).200s [%(id)s].%(ext)s"),
-    "noplaylist": True,
-    "restrictfilenames": True,
-    "progress_hooks": [progress_hook],
-
-    # ✅ force JS runtime
-    "js_runtimes": {"deno": {}},
-
-    # ✅ avoid SABR/web client missing URLs
-    "extractor_args": {"youtube": {"player_client": ["android"]}},
-}
-
     if not url:
         emit("error", message="Missing URL")
         return 1
@@ -98,11 +84,13 @@ def main() -> int:
         "noplaylist": True,
         "restrictfilenames": True,
         "progress_hooks": [progress_hook],
-    }
 
-    # IMPORTANT:
-    # - Do NOT put unknown keys (like postprocessor_args) inside the postprocessor dict.
-    # - Use top-level `postprocessor_args` with keys like "extractaudio+ffmpeg".
+        # Mitigations for modern YouTube behavior:
+        "extractor_args": {"youtube": {"player_client": ["android", "web_embedded", "web", "tv"]}},
+        # Only set js_runtimes if you actually installed it in the image.
+        # If you installed Node in Dockerfile, keep this. Otherwise remove it.
+        # "js_runtimes": {"node": {}},
+    }
 
     if codec == "mp3":
         q = quality[:-1] if quality.lower().endswith("k") else quality
@@ -116,7 +104,6 @@ def main() -> int:
             "preferredcodec": "mp3",
             "preferredquality": q,
         }]
-        # Pass ffmpeg args specifically for the ExtractAudio postprocessor
         ydl_opts["postprocessor_args"] = {
             "extractaudio+ffmpeg": ["-b:a", f"{q}k"],
         }
@@ -152,7 +139,7 @@ def main() -> int:
 
     try:
         emit("status", message="Starting")
-        with YoutubeDL(ydl_opts) as ydl:  # pyright: ignore[reportArgumentType]
+        with YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
 
         emit("done", message="Completed", outdir=outdir)
@@ -161,6 +148,7 @@ def main() -> int:
     except Exception as e:
         emit("error", message=str(e))
         return 2
+
 
 
 if __name__ == "__main__":
