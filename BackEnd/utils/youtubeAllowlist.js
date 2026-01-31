@@ -30,3 +30,4 @@ function isAllowedYoutubeUrl(url) {
     return false;
   }
 }
+module.exports = { isAllowedYoutubeUrl };

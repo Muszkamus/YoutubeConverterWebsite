@@ -5,7 +5,6 @@ import argparse
 from typing import Any
 from yt_dlp import YoutubeDL
 
-
 def _ffmpeg_exists(ffmpeg_path: str | None) -> bool:
     if not ffmpeg_path:
         return False
@@ -32,6 +31,20 @@ def main() -> int:
     ffmpeg_path = args.ffmpeg_path.strip()
     codec = args.codec.strip().lower()
     quality = str(args.quality).strip()
+
+
+    base_opts = {
+    "outtmpl": os.path.join(outdir, "%(title).200s [%(id)s].%(ext)s"),
+    "noplaylist": True,
+    "restrictfilenames": True,
+    "progress_hooks": [progress_hook],
+
+    # ✅ force JS runtime
+    "js_runtimes": {"deno": {}},
+
+    # ✅ avoid SABR/web client missing URLs
+    "extractor_args": {"youtube": {"player_client": ["android"]}},
+}
 
     if not url:
         emit("error", message="Missing URL")

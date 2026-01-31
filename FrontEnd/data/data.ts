@@ -1,3 +1,9 @@
+export type Format = keyof typeof formats;
+
+// export type Quality = (typeof formats)[Format][number];
+
+// export type QualityByFormat<F extends Format> = (typeof formats)[F][number];
+
 export const formats = {
   mp3: ["64", "96", "128", "160", "192", "256", "320"],
   wav: [
@@ -9,12 +15,6 @@ export const formats = {
   ],
   mp4: ["360p", "480p", "720p", "1080p", "1440p", "2160p"],
 } as const;
-
-// type infoTypes = {
-//   id: number;
-//   title: string;
-//   description: string;
-// };
 
 export const info = [
   {
@@ -41,14 +41,9 @@ export const info = [
     description:
       "When conversion completes, you get a download link that works for 3 minutes. After that, the file is removed and you’ll need to convert again.",
   },
+
   {
     id: 5,
-    title: "Privacy",
-    description:
-      "The app only uses the URL you submit to fetch and convert the audio. No account, login, or personal data is required.",
-  },
-  {
-    id: 6,
     title: "If something goes wrong",
     description:
       "If it fails or gets stuck, press Reset and try again. If it keeps failing, the video may be restricted or temporarily unavailable—contact the admin if needed.",

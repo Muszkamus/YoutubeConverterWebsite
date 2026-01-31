@@ -1,1 +1,2 @@
-/downloads/
+downloads/*
+node_modules/*

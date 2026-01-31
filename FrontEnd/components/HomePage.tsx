@@ -1,5 +1,5 @@
 "use client";
-import { formats, info } from "../data/data";
+import { Format, formats, info } from "../data/data";
 import { useEffect, useReducer, useState } from "react";
 import { initialState, reducer } from "../reducer/reducer";
 import ConvertButton from "../components/ConvertButton";
@@ -10,7 +10,6 @@ import ResetButton from "./ResetButton";
 import Accordion from "./Accordion";
 
 const HomePage = () => {
-  type Format = keyof typeof formats;
   const [format, setFormat] = useState<Format>("mp3");
   const [quality, setQuality] = useState<string>("192");
   const [state, dispatch] = useReducer(reducer, initialState);
