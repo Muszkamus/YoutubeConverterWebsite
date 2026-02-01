@@ -4,7 +4,7 @@ export type State = {
   status: "idle" | "queued" | "running" | "done" | "error";
   format: string;
   quality: string;
-  message: string;
+
   downloadUrl: string | null;
   lockedSubmit: boolean;
   error: string | null;
@@ -15,7 +15,7 @@ export type JobPayload = {
   status: "queued" | "running" | "done" | "error";
   quality: string;
   progress?: number;
-  message?: string;
+
   downloadUrl?: string | null;
   error?: string | null;
 };

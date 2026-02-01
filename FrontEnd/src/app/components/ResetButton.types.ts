@@ -1,4 +1,4 @@
-import { formats } from "../data/data";
+import { formats } from "../data/dataFORMATS";
 import { Action } from "../../../reducer/reducer";
 
 export type Format = keyof typeof formats;

@@ -6,7 +6,7 @@ const initialState: State = {
   status: "idle",
   format: "mp3",
   quality: "192",
-  message: "",
+
   downloadUrl: null,
   lockedSubmit: false,
   error: null,
@@ -22,7 +22,6 @@ function reducer(state: State, action: Action): State {
         status: "queued",
         format: action.payload.format,
         quality: action.payload.quality,
-        message: "Submitted",
         downloadUrl: null,
         lockedSubmit: true,
         error: null,
@@ -33,7 +32,7 @@ function reducer(state: State, action: Action): State {
         ...state,
         jobID: action.payload.jobID,
         status: action.payload.status,
-        message: action.payload.message ?? state.message,
+
         downloadUrl: action.payload.downloadUrl ?? state.downloadUrl,
         error: action.payload.error ?? null,
         lockedSubmit:
@@ -47,7 +46,6 @@ function reducer(state: State, action: Action): State {
         ...state,
         jobID: action.payload.jobID,
         status: "running",
-        message: "Starting converting...",
       };
     }
 
@@ -55,7 +53,7 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         status: "done",
-        message: "Completed",
+
         lockedSubmit: false,
       };
     }
@@ -66,7 +64,7 @@ function reducer(state: State, action: Action): State {
         link: "",
         jobID: null,
         status: "error",
-        message: "Error: Something went wrong",
+
         downloadUrl: null,
         lockedSubmit: false,
         error: action.payload.error,
