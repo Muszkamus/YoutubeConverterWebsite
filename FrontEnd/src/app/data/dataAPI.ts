@@ -1,5 +1,3 @@
-import { env } from "process";
-
 const envBase = process.env.NEXT_PUBLIC_BACKEND_BASE;
 
 if (!envBase) {
