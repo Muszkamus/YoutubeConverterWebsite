@@ -47,13 +47,15 @@ def main() -> int:
     }
 
     MP4_FORMAT_MAP: dict[str, str] = {
-        "360p":  "bestvideo[height<=360]+bestaudio/best",
-        "480p":  "bestvideo[height<=480]+bestaudio/best",
-        "720p":  "bestvideo[height<=720]+bestaudio/best",
-        "1080p": "bestvideo[height<=1080]+bestaudio/best",
-        "1440p": "bestvideo[height<=1440]+bestaudio/best",
-        "2160p": "bestvideo[height<=2160]+bestaudio/best",
+        "360p":  "bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]/best",
+        "480p":  "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best",
+        "720p":  "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best",
+        "1080p": "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best",
+        "1440p": "bestvideo[height<=1440][ext=mp4]+bestaudio[ext=m4a]/best[height<=1440][ext=mp4]/best",
+        "2160p": "bestvideo[height<=2160][ext=mp4]+bestaudio[ext=m4a]/best[height<=2160][ext=mp4]/best",
     }
+
+
 
     MP3_ALLOWED = {"64", "96", "128", "160", "192", "256", "320"}
 
