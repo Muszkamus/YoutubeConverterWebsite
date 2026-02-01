@@ -5,6 +5,7 @@ import argparse
 from typing import Any
 from yt_dlp import YoutubeDL
 
+
 def _ffmpeg_exists(ffmpeg_path: str | None) -> bool:
     if not ffmpeg_path:
         return False
@@ -47,15 +48,13 @@ def main() -> int:
     }
 
     MP4_FORMAT_MAP: dict[str, str] = {
-        "360p":  "bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]/best",
-        "480p":  "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best",
-        "720p":  "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best",
-        "1080p": "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best",
-        "1440p": "bestvideo[height<=1440][ext=mp4]+bestaudio[ext=m4a]/best[height<=1440][ext=mp4]/best",
-        "2160p": "bestvideo[height<=2160][ext=mp4]+bestaudio[ext=m4a]/best[height<=2160][ext=mp4]/best",
+        "360p":  "bestvideo[height<=360]+bestaudio/best",
+        "480p":  "bestvideo[height<=480]+bestaudio/best",
+        "720p":  "bestvideo[height<=720]+bestaudio/best",
+        "1080p": "bestvideo[height<=1080]+bestaudio/best",
+        "1440p": "bestvideo[height<=1440]+bestaudio/best",
+        "2160p": "bestvideo[height<=2160]+bestaudio/best",
     }
-
-
 
     MP3_ALLOWED = {"64", "96", "128", "160", "192", "256", "320"}
 
@@ -86,13 +85,11 @@ def main() -> int:
         "noplaylist": True,
         "restrictfilenames": True,
         "progress_hooks": [progress_hook],
-
-        # Mitigations for modern YouTube behavior:
-        "extractor_args": {"youtube": {"player_client": ["android", "web_embedded", "web", "tv"]}},
-        # Only set js_runtimes if you actually installed it in the image.
-        # If you installed Node in Dockerfile, keep this. Otherwise remove it.
-        # "js_runtimes": {"node": {}},
     }
+
+    # IMPORTANT:
+    # - Do NOT put unknown keys (like postprocessor_args) inside the postprocessor dict.
+    # - Use top-level `postprocessor_args` with keys like "extractaudio+ffmpeg".
 
     if codec == "mp3":
         q = quality[:-1] if quality.lower().endswith("k") else quality
@@ -106,6 +103,7 @@ def main() -> int:
             "preferredcodec": "mp3",
             "preferredquality": q,
         }]
+        # Pass ffmpeg args specifically for the ExtractAudio postprocessor
         ydl_opts["postprocessor_args"] = {
             "extractaudio+ffmpeg": ["-b:a", f"{q}k"],
         }
@@ -141,7 +139,7 @@ def main() -> int:
 
     try:
         emit("status", message="Starting")
-        with YoutubeDL(ydl_opts) as ydl:
+        with YoutubeDL(ydl_opts) as ydl:  # pyright: ignore[reportArgumentType]
             ydl.download([url])
 
         emit("done", message="Completed", outdir=outdir)
@@ -150,7 +148,6 @@ def main() -> int:
     except Exception as e:
         emit("error", message=str(e))
         return 2
-
 
 
 if __name__ == "__main__":
