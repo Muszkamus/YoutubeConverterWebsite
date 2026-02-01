@@ -46,14 +46,17 @@ def main() -> int:
         "24-bit/192kHz": ["-acodec", "pcm_s24le", "-ar", "192000"],
     }
 
-    MP4_FORMAT_MAP: dict[str, str] = {
-        "360p":  "bestvideo[height<=360]+bestaudio/best",
-        "480p":  "bestvideo[height<=480]+bestaudio/best",
-        "720p":  "bestvideo[height<=720]+bestaudio/best",
-        "1080p": "bestvideo[height<=1080]+bestaudio/best",
-        "1440p": "bestvideo[height<=1440]+bestaudio/best",
-        "2160p": "bestvideo[height<=2160]+bestaudio/best",
+    MP4_FORMAT_MAP = {
+        "360p":  "bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=360]+bestaudio/best[height<=360]/best",
+        "480p":  "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=480]+bestaudio/best[height<=480]/best",
+        "720p":  "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=720]+bestaudio/best[height<=720]/best",
+        "1080p": "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=1080]+bestaudio/best[height<=1080]/best",
+        "1440p": "bestvideo[height<=1440][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=1440]+bestaudio/best[height<=1440]/best",
+        "2160p": "bestvideo[height<=2160][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=2160]+bestaudio/best[height<=2160]/best",
     }
+
+
+
 
     MP3_ALLOWED = {"64", "96", "128", "160", "192", "256", "320"}
 
@@ -130,6 +133,21 @@ def main() -> int:
         ydl_opts["format"] = MP4_FORMAT_MAP[quality]
         ydl_opts["merge_output_format"] = "mp4"
 
+        ydl_opts["postprocessors"] = [
+            {"key": "FFmpegVideoConvertor", "preferedformat": "mp4"},
+        ]
+
+        ydl_opts["postprocessor_args"] = {
+            "videoconvertor+ffmpeg": [
+                "-c:v", "libx264",
+                "-crf", "23",
+                "-preset", "veryfast",
+                "-c:a", "aac",
+                "-b:a", "192k",
+                "-movflags", "+faststart",
+            ]
+        }
+
     else:
         emit("error", message=f"Unsupported codec: {codec}")
         return 1
@@ -148,8 +166,6 @@ def main() -> int:
     except Exception as e:
         emit("error", message=str(e))
         return 2
-
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
