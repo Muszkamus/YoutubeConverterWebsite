@@ -2,12 +2,12 @@
 
 import { ResetButtonProps } from "./ResetButton.types";
 
-const ResetButton = ({
+export default function ResetButton({
   dispatch,
   setUrl,
   setFormat,
   setQuality,
-}: ResetButtonProps) => {
+}: ResetButtonProps) {
   function handleReset() {
     dispatch({ type: "RESET" });
     setUrl("");
@@ -15,6 +15,4 @@ const ResetButton = ({
     setQuality("192");
   }
   return <button onClick={handleReset}>Reset</button>;
-};
-
-export default ResetButton;
+}

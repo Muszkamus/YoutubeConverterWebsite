@@ -1,17 +1,17 @@
 "use client";
 import "../styles/inputField.css";
 
-import { InputFieldProps } from "./InputFile.types";
+import { InputFieldProps } from "./InputField.types";
 
-const InputField = ({ url, setUrl }: InputFieldProps) => {
+export default function InputField({ url, setUrl }: InputFieldProps) {
   return (
     <input
       onChange={(e) => setUrl(e.target.value)}
+      type="url"
       value={url}
+      autoComplete="off"
       className="input"
       placeholder="Enter YouTube link here"
     ></input>
   );
-};
-
-export default InputField;
+}

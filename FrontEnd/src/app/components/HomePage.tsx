@@ -12,7 +12,7 @@ import Accordion from "./Accordion";
 import Spinner from "./Spinner";
 import { BACKEND_BASE } from "../data/dataAPI";
 
-const HomePage = () => {
+export default function HomePage() {
   const [format, setFormat] = useState<Format>("mp3");
   const [quality, setQuality] = useState<string>("192");
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -149,6 +149,4 @@ const HomePage = () => {
       </div>
     </>
   );
-};
-
-export default HomePage;
+}

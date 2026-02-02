@@ -1,4 +1,10 @@
-export const info = [
+type InfoItem = {
+  id: number;
+  title: string;
+  description: string;
+};
+
+export const info: InfoItem[] = [
   {
     id: 1,
     title: "What this app does",
@@ -30,4 +36,4 @@ export const info = [
     description:
       "If it fails or gets stuck, press Reset and try again. If it keeps failing, the video may be restricted or temporarily unavailable—contact the admin if needed.",
   },
-];
+] as const;

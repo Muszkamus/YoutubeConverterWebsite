@@ -1,8 +1,7 @@
-const envBase = process.env.NEXT_PUBLIC_BACKEND_BASE;
+const BACKEND_BASE = process.env.NEXT_PUBLIC_BACKEND_BASE;
 
-if (!envBase) {
+if (!BACKEND_BASE) {
   throw new Error("NEXT_PUBLIC_BACKEND_BASE is not defined");
 }
 
-console.log(envBase);
-export const BACKEND_BASE = envBase;
+export { BACKEND_BASE };

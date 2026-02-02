@@ -1,5 +1,6 @@
 "use client";
 
+import { BACKEND_BASE } from "../data/dataAPI";
 import "../styles/button.css";
 import { ConvertButtonProps } from "./ConvertButton.types";
 
@@ -10,6 +11,8 @@ const ConvertButton = ({
   state,
   dispatch,
 }: ConvertButtonProps) => {
+  // TODO
+  // To Extract into different file
   async function submitLink(): Promise<void> {
     const trimmed = url.trim();
     if (trimmed === "") return;
@@ -28,7 +31,7 @@ const ConvertButton = ({
     const intervalID = setInterval(() => {}, 5000);
     // Make the request every 10 seconds
     try {
-      const res = await fetch("http://localhost:8080/api/convert", {
+      const res = await fetch(`${BACKEND_BASE}/api/convert`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
