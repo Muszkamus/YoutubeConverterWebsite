@@ -4,42 +4,47 @@ body {
   margin: 0;
 }
 
+.text {
+  margin: 0;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1;
+}
+
 .homepage {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 12px;
-  padding: 24px; /* stops edge-clipping on small screens */
+  padding: 24px;
 }
 
 .inputDiv {
   display: flex;
   gap: 8px;
   align-items: center;
-  flex-wrap: wrap; /* avoids breaking on narrow screens */
+  flex-wrap: wrap;
 }
 
 .selectionDiv {
-  background-color: beige;
+  background-color: rgb(75, 75, 75);
   display: flex;
-  align-items: center; /* vertical align label + select */
-  justify-content: center;
-  gap: 12px;
+  align-items: center;
+  justify-content: left;
+  gap: 10px;
 
-  padding: 10px 14px; /* instead of fixed height */
+  padding: 10px 20px;
   border-radius: 10px;
-}
-
-.text {
-  margin: 0;
-  font-weight: 700; /* correct “bold” */
-  font-size: 18px;
-  line-height: 1;
 }
 
 .selectionDiv select {
   height: 34px;
   padding: 0 10px;
-  border-radius: 8px;
+  border-radius: 10px;
+}
+
+.quality {
+  width: 130px;
+  text-align: center; /* centers selected value */
 }

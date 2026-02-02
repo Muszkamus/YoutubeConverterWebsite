@@ -6,7 +6,6 @@ import { initialState, reducer } from "../reducer/reducer";
 import ConvertButton from "../components/ConvertButton";
 import InputField from "../components/InputField";
 import "../styles/button.css";
-import "../styles/state.css";
 import ResetButton from "./ResetButton";
 import Accordion from "./Accordion";
 import Spinner from "./Spinner";
@@ -78,6 +77,8 @@ export default function HomePage() {
   return (
     <>
       <div className="homepage">
+        <h1>Youtube Converter</h1>
+        <p>100% safe and Ad free YouTube Converter</p>
         <form
           className="inputDiv"
           onSubmit={(e) => {
@@ -86,7 +87,6 @@ export default function HomePage() {
         >
           <InputField url={url} setUrl={setUrl} />
         </form>
-
         <div className="selectionDiv">
           <p className="text">Select the quality</p>
 
@@ -104,16 +104,19 @@ export default function HomePage() {
               </option>
             ))}
           </select>
-
-          <select value={quality} onChange={(e) => setQuality(e.target.value)}>
-            {formats[format].map((q) => (
-              <option key={q} value={q}>
-                {q}
-              </option>
-            ))}
-          </select>
+          <div className="quality">
+            <select
+              value={quality}
+              onChange={(e) => setQuality(e.target.value)}
+            >
+              {formats[format].map((q) => (
+                <option key={q} value={q}>
+                  {q}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-
         {status === "idle" && (
           <ConvertButton
             url={url}
@@ -129,7 +132,6 @@ export default function HomePage() {
             Download {state.format}
           </a>
         )}
-
         {status === "error" && (
           <ResetButton
             dispatch={dispatch}
@@ -141,7 +143,7 @@ export default function HomePage() {
       </div>
       <Accordion data={info} />
 
-      <div className="stateBox">
+      <div>
         {/* <p>status: {status}</p>
 
           <p>error: {error}</p> */}
