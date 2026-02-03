@@ -28,7 +28,7 @@ const ConvertButton = ({
       },
     });
     // Set timeout for 5 seconds for each request
-    const intervalID = setInterval(() => {}, 5000);
+    // const intervalID = setInterval(() => {}, 5000);
     // Make the request every 10 seconds
     try {
       const res = await fetch(`${BACKEND_BASE}/api/convert`, {

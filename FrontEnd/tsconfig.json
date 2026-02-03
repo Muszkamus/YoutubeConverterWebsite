@@ -29,7 +29,8 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts",
-    "src/app/data/dataFORMATS.ts"
+    "src/app/data/dataFORMATS.ts",
+    "src/app/components/ResetButton.jsx"
   ],
   "exclude": ["node_modules"]
 }

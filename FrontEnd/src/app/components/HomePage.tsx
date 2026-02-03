@@ -10,6 +10,7 @@ import ResetButton from "./ResetButton";
 import Accordion from "./Accordion";
 import Spinner from "./Spinner";
 import { BACKEND_BASE } from "../data/dataAPI";
+import { useJobPolling } from "../hooks/useJobPolling";
 
 export default function HomePage() {
   const [format, setFormat] = useState<Format>("mp3");
@@ -24,55 +25,7 @@ export default function HomePage() {
       ? BACKEND_BASE + downloadUrl
       : downloadUrl;
 
-  useEffect(() => {
-    // Guard: don’t start polling without a valid job ID
-    if (!jobID) return;
-
-    // AbortController cancels in-flight fetches on unmount / job change
-    const controller = new AbortController();
-
-    // Track the polling timeout so it can be cleared on cleanup
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-    const poll = async () => {
-      try {
-        // Poll backend for current job state
-        const res = await fetch(`${BACKEND_BASE}/api/jobs/${jobID}`, {
-          signal: controller.signal,
-        });
-
-        // Non-200 means job is invalid or backend error
-        if (!res.ok) throw new Error(`Job not found (${res.status})`);
-
-        const job = await res.json();
-
-        // Update reducer with latest job status/progress
-        dispatch({ type: "JOB_UPDATE", payload: job });
-
-        // Terminal states: stop polling
-        if (job.status === "done" || job.status === "error") return;
-
-        // Schedule next poll
-        timeoutId = setTimeout(poll, 2000);
-      } catch (e) {
-        // Ignore errors caused by intentional abort
-        if (controller.signal.aborted) return;
-
-        // Normalize error for reducer/UI
-        const msg = e instanceof Error ? e.message : JSON.stringify(e);
-        dispatch({ type: "ERROR", payload: { error: msg } });
-      }
-    };
-
-    // Start polling immediately
-    poll();
-
-    // Cleanup: cancel fetch + clear scheduled timeout
-    return () => {
-      controller.abort();
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [jobID, BACKEND_BASE]);
+  useJobPolling(jobID ?? null, dispatch);
 
   return (
     <>
