@@ -1,0 +1,6 @@
+{
+  "//comment": ["For the nodemon to ignore heavy files"],
+  "watch": ["server.js", "app.js", "routes", "services", "utils"],
+  "ignore": ["ffmpeg/**", "downloads/**", "node_modules/**", ".git/**"],
+  "ext": "js,json"
+}

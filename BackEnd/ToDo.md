@@ -2,6 +2,8 @@
 
 ## 1. Stop returning `localhost:8080` in download links
 
+To ADD > Make it compatible with AWS via environment settings
+
 - [ ] Locate where `downloadUrl` is set (job `"done"` state)
 - [ ] Remove hardcoded `http://localhost:8080`
 - [ ] Prefer returning **relative path only**:

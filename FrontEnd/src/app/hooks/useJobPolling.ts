@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { BACKEND_BASE } from "../data/dataAPI";
 
 // TODO
-// Extract types
 
 type Dispatch = (action: any) => void;
 

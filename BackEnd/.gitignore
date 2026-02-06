@@ -1,2 +1,8 @@
 downloads/*
 /node_modules
+
+
+# env files (can opt-in for committing if needed)
+# ignore all env files except example
+.env*
+!.env.example
