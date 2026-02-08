@@ -1,0 +1,7 @@
+node_modules
+.env
+downloads/*
+notes.md
+ToDo.md
+.git
+.gitignore

@@ -1,0 +1,23 @@
+services:
+  api:
+    build:
+      context: ../.. # BackEnd/
+      dockerfile: docker/back/Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - downloads:/app/downloads
+    restart: unless-stopped
+
+  converter:
+    build:
+      context: ../..
+      dockerfile: docker/conv/Dockerfile
+    volumes:
+      - downloads:/app/downloads
+    restart: "no"
+
+volumes:
+  downloads:

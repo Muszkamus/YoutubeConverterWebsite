@@ -10,22 +10,24 @@ const app = express();
 const { startCleanupLoop } = require("./services/jobs.store");
 startCleanupLoop();
 
-const allowed = new Set([
-  "https://uplixer.co.uk",
-  "https://www.uplixer.co.uk",
-  ...(process.env.NODE_ENV !== "production"
-    ? ["http://localhost:3000", "http://127.0.0.1:3000"]
-    : []),
-]);
+const allowed = new Set(
+  (process.env.CORS_ORIGIN || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
+);
 
 app.use(
   cors({
     origin: (origin, cb) => {
-      if (!origin) return cb(null, true); // curl/postman
-      cb(null, allowed.has(origin));
+      if (!origin) return cb(null, true);
+      if (allowed.has(origin)) return cb(null, true);
+      return cb(new Error("Not allowed by CORS"));
     },
+    optionsSuccessStatus: 204,
   }),
 );
+
 app.use(express.json());
 
 app.use("/api", convertRoutes);
