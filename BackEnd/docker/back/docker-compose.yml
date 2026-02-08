@@ -17,7 +17,7 @@ services:
       dockerfile: docker/conv/Dockerfile
     volumes:
       - downloads:/app/downloads
-    restart: "no"
+    restart: "unless-stopped"
 
 volumes:
   downloads:

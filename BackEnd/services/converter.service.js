@@ -1,6 +1,5 @@
 const path = require("path");
 const fs = require("fs");
-const { spawn } = require("child_process");
 
 const { DOWNLOADS_DIR, setJob, getJob } = require("./jobs.store");
 
@@ -19,122 +18,95 @@ function pickNewestByExt(folder, ext) {
 }
 
 function runConversion({ jobID, link, codec, dockerArgsExtra }) {
-  const jobDirHost = path.join(DOWNLOADS_DIR, jobID);
-  fs.mkdirSync(jobDirHost, { recursive: true });
+  const jobDir = path.join(DOWNLOADS_DIR, jobID);
+  fs.mkdirSync(jobDir, { recursive: true });
 
-  const mountArg = `${DOWNLOADS_DIR}:/app/downloads`;
+  // create initial job state
+  setJob(jobID, { status: "queued", progress: 0, message: "Queued" });
 
-  const converter = spawn(
-    "docker",
-    [
-      "run",
-      "--rm",
-      "-v",
-      mountArg,
-      "yt-converter",
-      "--url",
-      link,
-      "--outdir",
-      `/app/downloads/${jobID}`,
-      ...dockerArgsExtra,
-    ],
-    { windowsHide: true },
+  // write job request for converter worker
+  const jobFile = path.join(jobDir, "job.json");
+  fs.writeFileSync(
+    jobFile,
+    JSON.stringify(
+      {
+        jobID,
+        url: link,
+        codec,
+        args: dockerArgsExtra ?? [],
+        createdAt: new Date().toISOString(),
+      },
+      null,
+      2,
+    ),
+    "utf8",
   );
 
+  // optional: watch for status updates written by converter
+  const statusFile = path.join(jobDir, "status.json");
+
   const JOB_TIMEOUT_MS = 10 * 60 * 1000;
-  const killTimer = setTimeout(() => {
-    setJob(jobID, {
-      status: "error",
-      error: "Job timed out",
-      message: "Timed out",
-    });
-    try {
-      converter.kill("SIGKILL");
-    } catch {}
-  }, JOB_TIMEOUT_MS);
+  const start = Date.now();
 
-  function finalizeSuccessFromHostFolder() {
-    const ext = codec === "mp4" ? ".mp4" : codec === "wav" ? ".wav" : ".mp3";
-    const filePath = pickNewestByExt(jobDirHost, ext);
-    const extLabel = codec.toUpperCase();
-
-    setJob(jobID, {
-      status: filePath ? "done" : "error",
-      progress: 100,
-      message: filePath ? "Completed" : `Completed but no ${extLabel} found`,
-      filePath,
-      downloadUrl: filePath ? `/api/downloads/${jobID}` : null,
-      error: filePath ? null : `No ${extLabel} produced`,
-    });
-  }
-
-  function handleJsonLine(line) {
-    const msg = JSON.parse(line);
-
-    if (msg.event === "progress") {
-      setJob(jobID, {
-        status: "running",
-        progress: typeof msg.pct === "number" ? msg.pct : 0,
-        message: msg.message ?? "",
-      });
-      return;
-    }
-
-    if (msg.event === "status") {
-      setJob(jobID, { status: "running", message: msg.message ?? "" });
-      return;
-    }
-
-    if (msg.event === "done") {
-      finalizeSuccessFromHostFolder();
-      return;
-    }
-
-    if (msg.event === "error") {
+  const timer = setInterval(() => {
+    // timeout
+    if (Date.now() - start > JOB_TIMEOUT_MS) {
+      clearInterval(timer);
       setJob(jobID, {
         status: "error",
-        error: msg.message ?? "Failed",
-        message: msg.message ?? "Failed",
+        error: "Job timed out",
+        message: "Timed out",
       });
+      return;
     }
-  }
 
-  let stdoutTail = "";
-  converter.stdout.on("data", (data) => {
-    const text = stdoutTail + data.toString("utf8");
-    const lines = text.split("\n");
-    stdoutTail = lines.pop() ?? "";
-
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed) continue;
+    // if converter wrote status.json, ingest it
+    if (fs.existsSync(statusFile)) {
       try {
-        handleJsonLine(trimmed);
+        const raw = fs.readFileSync(statusFile, "utf8");
+        const s = JSON.parse(raw);
+
+        if (s.status === "running") {
+          setJob(jobID, {
+            status: "running",
+            progress: typeof s.progress === "number" ? s.progress : 0,
+            message: s.message ?? "",
+          });
+        }
+
+        if (s.status === "error") {
+          clearInterval(timer);
+          setJob(jobID, {
+            status: "error",
+            error: s.error ?? "Failed",
+            message: s.message ?? "Failed",
+          });
+        }
+
+        if (s.status === "done") {
+          clearInterval(timer);
+
+          const ext =
+            codec === "mp4" ? ".mp4" : codec === "wav" ? ".wav" : ".mp3";
+          const filePath = pickNewestByExt(jobDir, ext);
+          const extLabel = codec.toUpperCase();
+
+          setJob(jobID, {
+            status: filePath ? "done" : "error",
+            progress: 100,
+            message: filePath
+              ? "Completed"
+              : `Completed but no ${extLabel} found`,
+            filePath,
+            downloadUrl: filePath ? `/api/downloads/${jobID}` : null,
+            error: filePath ? null : `No ${extLabel} produced`,
+          });
+        }
       } catch {
-        console.log(`[${jobID}] STDOUT: ${trimmed}`);
+        // ignore partial writes
       }
     }
-  });
-
-  converter.stderr.on("data", (data) => {
-    const txt = data.toString("utf8").trim();
-    if (txt) console.log(`[${jobID}] STDERR: ${txt}`);
-  });
-
-  converter.on("close", (code) => {
-    clearTimeout(killTimer);
-
-    const job = getJob(jobID);
-    if (job?.status === "done" || job?.status === "error") return;
-
-    if (code === 0) finalizeSuccessFromHostFolder();
-    else
-      setJob(jobID, {
-        status: "error",
-        error: `Docker exited with code ${code}`,
-        message: "Conversion failed",
-      });
-  });
+  }, 500);
 }
 
 module.exports = { runConversion };

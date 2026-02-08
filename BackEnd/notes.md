@@ -1,4 +1,4 @@
-Build converter docker
+### Build converter docker
 
 1: Build converter docker first
 
@@ -18,13 +18,13 @@ docker run --rm -v "${PWD}\downloads:/app/downloads" yt-converter `
 
 After it's done, delete the downloads folder where test file was created
 
-to build backed docker
+### Build backed docker
 
 ```bash
 docker build -f docker/back/Dockerfile -t backend-api:latest .
 ```
 
-Run the below from the root folder of the project
+Run the below from the root folder of the project to rebuild and start the docker
 
 ```bash
 cd BackEnd\docker\back

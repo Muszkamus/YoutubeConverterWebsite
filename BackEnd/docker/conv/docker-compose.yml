@@ -1,0 +1,7 @@
+converter:
+  build:
+    context: ../..
+    dockerfile: docker/conv/Dockerfile
+  volumes:
+    - downloads:/app/downloads
+  restart: unless-stopped
