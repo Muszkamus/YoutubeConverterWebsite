@@ -97,9 +97,8 @@ export default function HomePage() {
       <Accordion data={info} />
 
       <div>
-        {/* <p>status: {status}</p>
-
-          <p>error: {error}</p> */}
+        <p>status: {status}</p>
+        <p>error: {error}</p>
         https://www.youtube.com/watch?v=jKZ67l61Zho
       </div>
     </>
