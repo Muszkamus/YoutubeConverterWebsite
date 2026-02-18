@@ -27,7 +27,6 @@ docker build -f docker/back/Dockerfile -t backend-api:latest .
 Run the below from the root folder of the project to rebuild and start the docker
 
 ```bash
-cd BackEnd\docker\back
 docker compose down
 docker compose up --build -d
 docker compose logs -f api

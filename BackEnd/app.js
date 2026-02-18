@@ -38,4 +38,7 @@ app.get("/health", (req, res) => {
   res.status(200).json({ ok: true });
 });
 
+console.log(process.env.CORS_ORIGIN);
+console.log(allowed);
+
 module.exports = app;

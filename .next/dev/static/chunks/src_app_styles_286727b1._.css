@@ -1,0 +1,232 @@
+/* [project]/src/app/styles/button.css [app-client] (css) */
+button {
+  cursor: pointer;
+  background-color: #fff;
+  border: 2.5px solid #e0e1e4;
+  border-radius: 5px;
+  min-width: 100px;
+  height: 45px;
+  padding: 8px;
+  transition: all .2s ease-in-out;
+}
+
+button:hover {
+  background-color: #e4e4e4;
+}
+
+button:active {
+  transform: scale(.95);
+}
+
+.downloadBtn {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: 1px;
+  background-color: #444141;
+  border: none;
+  border-radius: 4px;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.downloadBtn:hover {
+  background-color: #333;
+}
+
+.downloadBtn:active {
+  transform: translateY(1px);
+}
+
+/* [project]/src/app/styles/inputField.css [app-client] (css) */
+.input {
+  color: #555;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  width: 330px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.input:focus {
+  border-color: #5f0;
+  box-shadow: 0 0 0 .2rem #007bff40;
+}
+
+input:hover {
+  outline: 2px solid #fff;
+}
+
+/* [project]/src/app/styles/accordion.css [app-client] (css) */
+.accordion {
+  flex-direction: column;
+  gap: 10px;
+  width: 90%;
+  max-width: 500px;
+  margin: auto;
+  display: flex;
+}
+
+.item {
+  cursor: pointer;
+  border-top: 2px solid #585858;
+  border-bottom: 2px solid #585858;
+  border-radius: 2px;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 24px;
+  transition: transform .2s, background-color .2s;
+  display: flex;
+  box-shadow: 0 0 30px #0000001a;
+}
+
+.item:hover {
+  background-color: #252525;
+  border-color: #9bff8b;
+  transform: translateY(-3px);
+}
+
+.title, .icon {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.content-box {
+  grid-column: 2 / -1;
+  padding-bottom: 16px;
+  line-height: 1.6;
+}
+
+.content-box ul {
+  color: #d1d1d1;
+  padding-left: 4px;
+  font-size: 16px;
+  line-height: 1.6;
+  transition: max-height .3s, opacity .3s;
+}
+
+.open {
+  border-top: 4px solid #61a756;
+  border-bottom: 4px solid #61a756;
+}
+
+.open .number, .open .title {
+  color: #087f5b;
+}
+
+.content-box {
+  color: #d1d1d1;
+}
+
+.textAccordion {
+  color: #fff;
+  font-size: 20px;
+  text-decoration: underline;
+}
+
+/* [project]/src/app/styles/spinner.css [app-client] (css) */
+.loaderBox {
+  justify-content: center;
+  align-items: center;
+  width: 45px;
+  height: 45px;
+  display: flex;
+}
+
+.loader {
+  text-indent: -9999em;
+  border-radius: 50%;
+  width: 1em;
+  height: 1em;
+  font-size: 10px;
+  animation: 1.1s infinite mulShdSpin;
+  position: relative;
+  transform: translateZ(0);
+}
+
+@keyframes mulShdSpin {
+  0%, 100% {
+    box-shadow: 0 -2.6em 0 0 #fff, 1.8em -1.8em 0 0 #fff3, 2.5em 0 0 0 #fff3, 1.75em 1.75em 0 0 #fff3, 0 2.5em 0 0 #fff3, -1.8em 1.8em 0 0 #fff3, -2.6em 0 0 0 #ffffff80, -1.8em -1.8em 0 0 #ffffffb3;
+  }
+
+  12.5% {
+    box-shadow: 0 -2.6em 0 0 #ffffffb3, 1.8em -1.8em 0 0 #fff, 2.5em 0 0 0 #fff3, 1.75em 1.75em 0 0 #fff3, 0 2.5em 0 0 #fff3, -1.8em 1.8em 0 0 #fff3, -2.6em 0 0 0 #fff3, -1.8em -1.8em 0 0 #ffffff80;
+  }
+
+  25% {
+    box-shadow: 0 -2.6em 0 0 #ffffff80, 1.8em -1.8em 0 0 #ffffffb3, 2.5em 0 0 0 #fff, 1.75em 1.75em 0 0 #fff3, 0 2.5em 0 0 #fff3, -1.8em 1.8em 0 0 #fff3, -2.6em 0 0 0 #fff3, -1.8em -1.8em 0 0 #fff3;
+  }
+
+  37.5% {
+    box-shadow: 0 -2.6em 0 0 #fff3, 1.8em -1.8em 0 0 #ffffff80, 2.5em 0 0 0 #ffffffb3, 1.75em 1.75em 0 0 #fff, 0 2.5em 0 0 #fff3, -1.8em 1.8em 0 0 #fff3, -2.6em 0 0 0 #fff3, -1.8em -1.8em 0 0 #fff3;
+  }
+
+  50% {
+    box-shadow: 0 -2.6em 0 0 #fff3, 1.8em -1.8em 0 0 #fff3, 2.5em 0 0 0 #ffffff80, 1.75em 1.75em 0 0 #ffffffb3, 0 2.5em 0 0 #fff, -1.8em 1.8em 0 0 #fff3, -2.6em 0 0 0 #fff3, -1.8em -1.8em 0 0 #fff3;
+  }
+
+  62.5% {
+    box-shadow: 0 -2.6em 0 0 #fff3, 1.8em -1.8em 0 0 #fff3, 2.5em 0 0 0 #fff3, 1.75em 1.75em 0 0 #ffffff80, 0 2.5em 0 0 #ffffffb3, -1.8em 1.8em 0 0 #fff, -2.6em 0 0 0 #fff3, -1.8em -1.8em 0 0 #fff3;
+  }
+
+  75% {
+    box-shadow: 0 -2.6em 0 0 #fff3, 1.8em -1.8em 0 0 #fff3, 2.5em 0 0 0 #fff3, 1.75em 1.75em 0 0 #fff3, 0 2.5em 0 0 #ffffff80, -1.8em 1.8em 0 0 #ffffffb3, -2.6em 0 0 0 #fff, -1.8em -1.8em 0 0 #fff3;
+  }
+
+  87.5% {
+    box-shadow: 0 -2.6em 0 0 #fff3, 1.8em -1.8em 0 0 #fff3, 2.5em 0 0 0 #fff3, 1.75em 1.75em 0 0 #fff3, 0 2.5em 0 0 #fff3, -1.8em 1.8em 0 0 #ffffff80, -2.6em 0 0 0 #ffffffb3, -1.8em -1.8em 0 0 #fff;
+  }
+}
+
+/* [project]/src/app/styles/home.css [app-client] (css) */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.text {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.homepage {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  display: flex;
+}
+
+.inputDiv {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  display: flex;
+}
+
+.selectionDiv {
+  background-color: #4b4b4b;
+  border-radius: 10px;
+  justify-content: left;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  display: flex;
+}
+
+.selectionDiv select {
+  border-radius: 10px;
+  height: 34px;
+  padding: 0 10px;
+}
+
+.quality {
+  text-align: center;
+  width: 130px;
+}
+
+/*# sourceMappingURL=src_app_styles_286727b1._.css.map*/

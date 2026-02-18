@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/app/styles/home.css"],"sourcesContent":["html,\r\nbody {\r\n  height: 100%;\r\n  margin: 0;\r\n}\r\n\r\n.text {\r\n  margin: 0;\r\n  font-weight: 700;\r\n  font-size: 18px;\r\n  line-height: 1;\r\n}\r\n\r\n.homepage {\r\n  display: flex;\r\n  flex-direction: column;\r\n  justify-content: center;\r\n  align-items: center;\r\n  gap: 12px;\r\n  padding: 24px;\r\n}\r\n\r\n.inputDiv {\r\n  display: flex;\r\n  gap: 8px;\r\n  align-items: center;\r\n  flex-wrap: wrap;\r\n}\r\n\r\n.selectionDiv {\r\n  background-color: rgb(75, 75, 75);\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: left;\r\n  gap: 10px;\r\n\r\n  padding: 10px 20px;\r\n  border-radius: 10px;\r\n}\r\n\r\n.selectionDiv select {\r\n  height: 34px;\r\n  padding: 0 10px;\r\n  border-radius: 10px;\r\n}\r\n\r\n.quality {\r\n  width: 130px;\r\n  text-align: center; /* centers selected value */\r\n}\r\n"],"names":[],"mappings":"AAAA;;;;;AAMA;;;;;;;AAOA;;;;;;;;;AASA;;;;;;;AAOA;;;;;;;;;;AAWA;;;;;;AAMA"}}]
+}

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/app/styles/inputField.css"],"sourcesContent":[".input {\r\n  width: 330px;\r\n\r\n  padding: 10px;\r\n  border: 2px solid #ccc;\r\n  border-radius: 5px;\r\n  font-size: 16px;\r\n  color: #555;\r\n  outline: none;\r\n}\r\n\r\n.input:focus {\r\n  border-color: #55ff00;\r\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\r\n}\r\n\r\ninput:hover {\r\n  outline: 2px solid rgb(255, 255, 255);\r\n}\r\n"],"names":[],"mappings":"AAAA;;;;;;;;;;AAWA;;;;;AAKA"}}]
+}

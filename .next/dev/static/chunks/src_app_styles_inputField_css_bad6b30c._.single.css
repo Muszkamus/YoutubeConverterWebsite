@@ -1,0 +1,21 @@
+/* [project]/src/app/styles/inputField.css [app-client] (css) */
+.input {
+  color: #555;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  width: 330px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.input:focus {
+  border-color: #5f0;
+  box-shadow: 0 0 0 .2rem #007bff40;
+}
+
+input:hover {
+  outline: 2px solid #fff;
+}
+
+/*# sourceMappingURL=src_app_styles_inputField_css_bad6b30c._.single.css.map*/
