@@ -80,10 +80,20 @@ export default function HomePage() {
           />
         )}
         {isWorking && <Spinner />}
+
         {status === "done" && fullDownloadUrl && (
-          <a className="downloadBtn" href={fullDownloadUrl} download>
-            Download {state.format}
-          </a>
+          <>
+            <a className="downloadBtn" href={fullDownloadUrl} download>
+              Download {state.format}
+            </a>
+
+            <ResetButton
+              dispatch={dispatch}
+              setUrl={setUrl}
+              setFormat={setFormat}
+              setQuality={setQuality}
+            />
+          </>
         )}
         {status === "error" && (
           <ResetButton
