@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/RadekLaptop/Documents/Programming/YoutubeConverterWebsite/FrontEnd/src/app/styles/main.css"],"sourcesContent":[".background {\r\n  background-color: #1a1a1a;\r\n  color: white;\r\n}\r\n"],"names":[],"mappings":"AAAA"}}]
-}
