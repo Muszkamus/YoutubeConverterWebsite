@@ -6,3 +6,5 @@ downloads/*
 # ignore all env files except example
 .env*
 !.env.example
+
+youtube-cookies.txt
