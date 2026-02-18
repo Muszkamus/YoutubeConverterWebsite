@@ -39,6 +39,10 @@ def main() -> int:
 
     os.makedirs(outdir, exist_ok=True)
 
+    cookies_path = os.getenv("YTDLP_COOKIES", "/app/youtube-cookies.txt")
+    if not os.path.isfile(cookies_path):
+        cookies_path = ""  # don't set cookiefile if missing
+
     WAV_MAP: dict[str, list[str]] = {
         "16-bit/44.1kHz": ["-acodec", "pcm_s16le", "-ar", "44100"],
         "16-bit/48kHz":  ["-acodec", "pcm_s16le", "-ar", "48000"],
@@ -87,10 +91,10 @@ def main() -> int:
         "progress_hooks": [progress_hook],
     }
 
-    # IMPORTANT:
-    # - Do NOT put unknown keys (like postprocessor_args) inside the postprocessor dict.
-    # - Use top-level `postprocessor_args` with keys like "extractaudio+ffmpeg".
+    if cookies_path:
+        ydl_opts["cookiefile"] = cookies_path
 
+    # codec options
     if codec == "mp3":
         q = quality[:-1] if quality.lower().endswith("k") else quality
         if q not in MP3_ALLOWED:
@@ -103,7 +107,6 @@ def main() -> int:
             "preferredcodec": "mp3",
             "preferredquality": q,
         }]
-        # Pass ffmpeg args specifically for the ExtractAudio postprocessor
         ydl_opts["postprocessor_args"] = {
             "extractaudio+ffmpeg": ["-b:a", f"{q}k"],
         }

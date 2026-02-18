@@ -1,7 +1,7 @@
 services:
   api:
     build:
-      context: ../.. # BackEnd/
+      context: ../..
       dockerfile: docker/back/Dockerfile
     ports:
       - "8080:8080"
@@ -17,7 +17,8 @@ services:
       dockerfile: docker/conv/Dockerfile
     volumes:
       - downloads:/app/downloads
-    restart: "unless-stopped"
+      - ../../BackEnd/youtube-cookies.txt:/app/youtube-cookies.txt:ro
+    restart: unless-stopped
 
 volumes:
   downloads:

@@ -4,4 +4,5 @@ converter:
     dockerfile: docker/conv/Dockerfile
   volumes:
     - downloads:/app/downloads
+    - ../../BackEnd/youtube-cookies.txt:/app/youtube-cookies.txt:ro
   restart: unless-stopped
