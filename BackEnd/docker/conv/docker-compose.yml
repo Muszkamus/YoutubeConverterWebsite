@@ -1,8 +1,14 @@
-converter:
-  build:
-    context: ../..
-    dockerfile: docker/conv/Dockerfile
-  volumes:
-    - downloads:/app/downloads
-    - ../../BackEnd/youtube-cookies.txt:/app/youtube-cookies.txt:ro
-  restart: unless-stopped
+services:
+  converter:
+    build:
+      context: ../..
+      dockerfile: docker/conv/Dockerfile
+    volumes:
+      - downloads:/app/downloads
+      - /home/ubuntu/app/BackEnd/youtube-cookies.txt:/app/BackEnd/youtube-cookies.txt:ro
+    environment:
+      - YTDLP_COOKIES=/app/BackEnd/youtube-cookies.txt
+    restart: unless-stopped
+
+volumes:
+  downloads:

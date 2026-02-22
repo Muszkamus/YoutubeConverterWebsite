@@ -7,7 +7,8 @@
 export const formats = {
   mp3: ["64", "96", "128", "160", "192"],
   wav: ["16-bit/44.1kHz", "16-bit/48kHz", "24-bit/48kHz"],
-  mp4: ["360p", "480p", "720p", "1080p"],
+  //  mp4: ["360p", "480p", "720p", "1080p"], // Removed due to wrong codecs
+  // The issue: MP4 is downloaded is vp09 format, rather than H.264
 } as const;
 
 export type Format = keyof typeof formats;

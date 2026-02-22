@@ -39,9 +39,10 @@ docker build -f docker/back/Dockerfile -t backend-api:latest .
 
 ```
 
-Run the below from the root/docker/back to rebuild and start the docker
+Run the below from the BackEnd to rebuild and start the docker
 
 ```bash
+cd docker/back
 docker compose down
 docker compose up --build -d
 ```

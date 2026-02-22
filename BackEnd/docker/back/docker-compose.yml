@@ -11,14 +11,5 @@ services:
       - downloads:/app/downloads
     restart: unless-stopped
 
-  converter:
-    build:
-      context: ../..
-      dockerfile: docker/conv/Dockerfile
-    volumes:
-      - downloads:/app/downloads
-      - ../../BackEnd/youtube-cookies.txt:/app/youtube-cookies.txt:ro
-    restart: unless-stopped
-
 volumes:
   downloads:
